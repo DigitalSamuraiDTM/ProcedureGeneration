@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
+import com.digitalsamurai.jni_test.screens.main.MainScreen
 import com.digitalsamurai.jni_test.screens.settings.SettingsScreen
 
 
@@ -22,6 +23,6 @@ fun Navigation() {
     }
 }
 
-val startScreen: BaseScreen<*> = SettingsScreen
+val startScreen: BaseScreen<*> = MainScreen
 
-val appsScreen = setOf<BaseScreen<*>>(SettingsScreen)
+val appsScreen = setOf<BaseScreen<*>>(SettingsScreen, MainScreen)
