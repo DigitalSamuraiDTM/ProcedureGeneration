@@ -7,6 +7,7 @@ android {
     namespace = "com.digitalsamurai.monochrome"
     compileSdk = 35
 
+
     defaultConfig {
         minSdk = 24
 
@@ -40,4 +41,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
 }

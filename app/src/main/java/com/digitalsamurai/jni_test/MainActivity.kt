@@ -3,10 +3,12 @@ package com.digitalsamurai.jni_test
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
+import androidx.activity.compose.setContent
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
 import com.digitalsamurai.jni_test.databinding.ActivityMainBinding
 import com.digitalsamurai.monochrome.JavaMonochromeConverter
 import com.google.android.material.snackbar.Snackbar
@@ -48,8 +50,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        // Example of a call to a native method
+
+
+        setContent {
+            Navigation()
+        }
 
         binding.buttonSelectContent.setOnClickListener {
             mediaSelector.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
