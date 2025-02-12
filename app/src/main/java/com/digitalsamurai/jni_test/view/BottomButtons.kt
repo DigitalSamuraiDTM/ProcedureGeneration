@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,9 +27,11 @@ public fun NdkButton(modifier: Modifier, onClick: () -> Unit) {
     Button(
         modifier = modifier,
         onClick = onClick,
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
         colors = ButtonDefaults.buttonColors()
             .copy(
                 containerColor = MaterialTheme.colorScheme.ndkButtonBackground,
+                contentColor = MaterialTheme.colorScheme.surface
             )
     ) {
         Text("NDK")
@@ -40,9 +43,11 @@ public fun KotlinButton(modifier: Modifier, onClick: () -> Unit) {
     Button(
         modifier = modifier,
         onClick = onClick,
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
         colors = ButtonDefaults.buttonColors()
             .copy(
                 containerColor = MaterialTheme.colorScheme.kotlinButtonBackground,
+                contentColor = MaterialTheme.colorScheme.surface
             )
     ) {
         Text("Kotlin")
