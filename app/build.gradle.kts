@@ -71,10 +71,12 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.fragment.compose)
+    implementation(libs.androidx.navigation.fragment.compose)
     implementation("androidx.navigation:navigation-compose:2.8.6")
+    debugImplementation(libs.androidx.ui.tooling)
 
 }

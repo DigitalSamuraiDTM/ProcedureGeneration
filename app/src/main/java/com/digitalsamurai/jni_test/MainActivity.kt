@@ -7,9 +7,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.digitalsamurai.jni_test.databinding.ActivityMainBinding
+import com.digitalsamurai.jni_test.theme.AppTheme
 import com.digitalsamurai.monochrome.JavaMonochromeConverter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
@@ -23,108 +27,14 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
-
-    private var currentImageUriFlow = MutableStateFlow<Uri?>(null)
-
-    private var jobConverting: Job? = null
-
-    private val mediaSelector =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-
-                binding.imageSelected.setImageURI(uri)
-                currentImageUriFlow.tryEmit(uri)
-
-
-                binding.textSelectedPhotoFileInfo.text = buildInfo(uri)
-
-            } else {
-                Snackbar.make(binding.root, "INVALID URI", Snackbar.LENGTH_LONG).show()
-            }
-        }
-
-    private val javaMonochromeConverter = JavaMonochromeConverter()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
-
-
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            Navigation()
-        }
-
-        binding.buttonSelectContent.setOnClickListener {
-            mediaSelector.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-        }
-        binding.buttonDecodeViaJava.setOnClickListener {
-            val imageUri = currentImageUriFlow.value
-            if (imageUri != null) {
-                jobConverting?.cancel()
-                jobConverting = null
-                jobConverting = lifecycleScope.launch(Dispatchers.Default) {
-                    var isFirstCollecting = false
-                    javaMonochromeConverter.makeImageMonochrome(applicationContext, imageUri).collect { progress ->
-                        // Да, я специально накодил жесткий костыль вместо человеческого стейта ровно для того, чтобы посмотреть как паттерн через errorReason входит в идею разработку на котлине
-                        // Ответ: никак, это неудобно и непрактично, описание стейта в sealed interface гораздо проще в данной семантике разработки, так что не надо писать костыли!
-                        // из плюсов такого подхода -- мы избавляемся от смарткастов и всего прочего, но я уверен, что sealed interface хорошо оптимизирован для смарткастов, поэтому этот плюс тоже бесполезен
-
-                        if (progress.errorReason != null) {
-                            binding.textJdkTimeConverting.text = "ERROR REASON: ${progress.errorReason}"
-                            cancel()
-                            return@collect
-                        }
-
-
-                        withContext(Dispatchers.Main) {
-
-                        binding.imageSelected.setImageBitmap(progress.bitmap!!)
-                        binding.imageSelected.invalidate()
-                        }
-
-                        if (progress.isFinished) {
-                            binding.textJdkTimeConverting.text = "FINISHED"
-                        }
-                    }
-                }
+            AppTheme {
+                Navigation()
             }
         }
-
-        lifecycleScope.launch {
-            currentImageUriFlow.collect { uri ->
-                binding.buttonDecodeViaJava.isEnabled = uri != null
-            }
-        }
-    }
-
-    private fun buildInfo(uri: Uri): String {
-        val mimeType = contentResolver.getType(uri)
-        val cursor = contentResolver.query(uri, null, null, null, null)!!
-
-        cursor.moveToFirst()
-
-        val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-        val name = cursor.getString(nameIndex)
-
-        val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
-        val size = cursor.getLong(sizeIndex)
-
-        cursor.close()
-
-        return "Name: ${name}\n" +
-                "Size: ${size}\n" +
-                "MimeType: ${mimeType}\n" +
-                "uri: ${uri}"
-
-        // конечно же это не работает, потому что uri файла ссылается на провайдер "content://"
-        // вместо этого разработчики гугла предоставили нам ОЧЕНЬ удобную апиху чтения контента))))))))))
-//        return "Name: ${file.name} \n" +
-//                "Size: ${file.totalSpace}" +
-//                "Absolute: ${file.absolutePath}" +
-//                "Path: ${file.path}" +
-//                "Free space: ${file.freeSpace}"
     }
 
 

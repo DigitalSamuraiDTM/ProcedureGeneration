@@ -1,24 +1,32 @@
 package com.digitalsamurai.jni_test.core.screen
 
 import android.annotation.SuppressLint
-import android.util.Log
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
-
-abstract class BaseScreen<VIEWMODEL: ScreenViewModel<*,*>> {
+// TODO короче надо сделать так, чтобы в SCREEN передавалась не вьюмодель целиковая, а только STATE, SIDE EFFECT, и ACTIONS
+// в ACTIONS надо описать список доступных действий для экрана, чтобы не прокидывать в Screen viewmodelьку и можно было смотреть compose preview
+abstract class BaseScreen<VIEWMODEL : ScreenViewModel<*, *>> {
 
     protected abstract val routeName: String
-    public val screenRoute get() = ROOT+routeName
+    public val screenRoute get() = ROOT + routeName
+
+    protected lateinit var viewModel: VIEWMODEL
 
     /**
      * Entry point for screen from navigation
      */
     @Composable
     public fun NavToScreen(navController: NavController) {
-        val viewModel = MakeViewModel()
+        viewModel = MakeViewModel()
+        //TODO: INJECT VIA HILT OR DAGGER
         viewModel.setNavController(navController)
-        Screen(viewModel)
+        Surface(modifier = Modifier.fillMaxSize()) {
+            Screen(viewModel)
+        }
     }
 
     @Composable
@@ -26,7 +34,7 @@ abstract class BaseScreen<VIEWMODEL: ScreenViewModel<*,*>> {
 
     @SuppressLint("NotConstructor")
     @Composable
-    protected abstract fun Screen(viewModel: VIEWMODEL)
+    public abstract fun Screen(viewModel: VIEWMODEL)
 
     public companion object {
         const val ROOT = "root/"

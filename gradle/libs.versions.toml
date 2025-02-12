@@ -12,6 +12,7 @@ material = "1.10.0"
 constraintlayout = "2.1.4"
 navigation = "2.8.6"
 navigationFragmentCompose = "2.8.6"
+uiTooling = "1.7.8"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -21,6 +22,7 @@ androidx-material3 = { module = "androidx.compose.material3:material3" }
 androidx-navigation = { module = "androidx.navigation:navigation", version.ref = "navigation" }
 androidx-navigation-fragment-compose = { module = "androidx.navigation:navigation-fragment-compose", version.ref = "navigationFragmentCompose" }
 androidx-ui = { module = "androidx.compose.ui:ui" }
+androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -28,6 +30,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 material3 = { module = "androidx.compose.material3:material3" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 
 [plugins]
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
