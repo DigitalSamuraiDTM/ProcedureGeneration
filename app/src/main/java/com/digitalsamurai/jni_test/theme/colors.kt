@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 
 internal val lightColorScheme = lightColorScheme(
     background = Color(0xFFEE0000),
-    primary = Color(0xFF005215),
+    primary = Color(0xFF00751A),
     surface = Color(0xFFEEEEEE)
 )
 // primary  ocновной цвет бэкграунда элемента (например кнопки)
@@ -18,17 +18,17 @@ internal val lightColorScheme = lightColorScheme(
 public val ColorScheme.ndkButtonBackground: Color
     @Composable get() =
         if (isSystemInDarkTheme()) {
-            Color(0xff81c784)
+            Color(0xFF00E826)
         } else {
-            Color(0xff1b5e20)
+            Color(0xFF00751A)
         }
 
 public val ColorScheme.kotlinButtonBackground: Color
     @Composable get() =
         if (isSystemInDarkTheme()) {
-            Color(0xffba68c8)
+            Color(0xFFAA00E8)
         } else {
-            Color(0xff4a148c)
+            Color(0xFF4A0069)
         }
 
 internal val darkColorScheme = darkColorScheme(
