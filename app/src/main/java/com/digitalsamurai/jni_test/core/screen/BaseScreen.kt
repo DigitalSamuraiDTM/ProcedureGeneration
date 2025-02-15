@@ -14,14 +14,13 @@ abstract class BaseScreen<VIEWMODEL : ScreenViewModel<*, *>> {
     protected abstract val routeName: String
     public val screenRoute get() = ROOT + routeName
 
-    protected lateinit var viewModel: VIEWMODEL
 
     /**
      * Entry point for screen from navigation
      */
     @Composable
     public fun NavToScreen(navController: NavController) {
-        viewModel = MakeViewModel()
+        val viewModel = MakeViewModel()
         //TODO: INJECT VIA HILT OR DAGGER
         viewModel.setNavController(navController)
         Surface(modifier = Modifier.fillMaxSize()) {

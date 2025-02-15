@@ -8,7 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.ModConverter
 
@@ -19,7 +19,7 @@ object SettingsScreen : BaseScreen<SettingsScreenViewModel>() {
 
     @Composable
     override fun MakeViewModel(): SettingsScreenViewModel {
-        return viewModel()
+        return hiltViewModel()
     }
 
     @Composable

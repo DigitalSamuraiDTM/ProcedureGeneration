@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.digitalsamurai.jni_test.ThemeMod
 import com.digitalsamurai.jni_test.theme.AppTheme
 import com.digitalsamurai.jni_test.theme.kotlinButtonBackground
 import com.digitalsamurai.jni_test.theme.ndkButtonBackground
@@ -100,7 +101,7 @@ public fun KotlinButton(modifier: Modifier, onClick: () -> Unit) {
 @Composable()
 @Preview(showSystemUi = false, uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun Preview() {
-    AppTheme {
+    AppTheme(mod = ThemeMod.NDK) {
         val state = remember { mutableStateOf(ModConverter.defaultState()) }
         Surface {
             Box(modifier = Modifier.fillMaxSize()) {
