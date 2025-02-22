@@ -31,7 +31,6 @@ abstract class BaseScreen<VIEWMODEL : ScreenViewModel<*, *>> {
     @Composable
     protected abstract fun MakeViewModel(): VIEWMODEL
 
-    @SuppressLint("NotConstructor")
     @Composable
     public abstract fun Screen(viewModel: VIEWMODEL)
 
