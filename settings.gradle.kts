@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "jni_test"
 include(":app")
-include(":monochrome")
+include(":noises")

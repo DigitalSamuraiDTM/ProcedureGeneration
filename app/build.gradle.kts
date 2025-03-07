@@ -59,7 +59,7 @@ kapt {
 
 dependencies {
 
-    implementation(project(":monochrome"))
+    implementation(project(":noises"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
