@@ -1,8 +1,6 @@
 package com.digitalsamurai.monochrome
 
-import android.animation.TimeInterpolator
-import android.view.animation.BaseInterpolator
-import com.digitalsamurai.noises.data.Point
+import com.digitalsamurai.noises.data.D2Point
 import com.digitalsamurai.noises.interpolators.linearInterpolation
 import org.junit.Test
 
@@ -18,8 +16,8 @@ class LinearInterpolatorTest {
         val x = 10f
         val y = linearInterpolation(
             x = x,
-            point1 = Point(0.0f, 0.0f),
-            point2 = Point(11f, 11f)
+            point1 = D2Point(0.0f, 0.0f),
+            point2 = D2Point(11f, 11f)
         )
         println(y)
         assert(y == 10f)

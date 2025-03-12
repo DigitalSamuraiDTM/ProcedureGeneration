@@ -1,6 +1,6 @@
 package com.digitalsamurai.noises.interpolators
 
-import com.digitalsamurai.noises.data.Point
+import com.digitalsamurai.noises.data.D2Point
 
 
 /**
@@ -20,7 +20,7 @@ import com.digitalsamurai.noises.data.Point
  * @param point2 вторая точка для построения отрезка
  * @return значение линейной интерполяции на прямой (так как интерполяция линейная)
  */
-public fun linearInterpolation(x : Float, point1: Point, point2: Point): Float {
+public fun linearInterpolation(x : Float, point1: D2Point, point2: D2Point): Float {
     // у нас есть точка Х, по ней нужно найти интерполируемое значение Y и вернуть его
 
     // Для этого нам сначала надо построить прямую, основываясь на функции fX(), которая возвращает Y по значению X
@@ -30,5 +30,5 @@ public fun linearInterpolation(x : Float, point1: Point, point2: Point): Float {
     // нам надо найти Y, поэтому преобразовываем и получаем
     // y = ((x - x1)(y2 - y1)) / (x2 - x1) + y1
 
-    return ((x - point1.x) * (point2.y - point1.y)) / (point2.x - point1.x) + point1.y
+    return  point1.y + ((x - point1.x) * (point2.y - point1.y)) / (point2.x - point1.x)
 }
