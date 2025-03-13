@@ -23,7 +23,7 @@ class BilinearInterpolatorTest {
             pointRightTop = q22
         )
         println(i)
-        assert(true)
+        assert(i == 0.66f)
     }
 
 }
