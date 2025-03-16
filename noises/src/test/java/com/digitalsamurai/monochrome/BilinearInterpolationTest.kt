@@ -2,7 +2,7 @@ package com.digitalsamurai.monochrome
 
 import com.digitalsamurai.noises.data.D2Point
 import com.digitalsamurai.noises.data.D3Point
-import com.digitalsamurai.noises.interpolators.bilinearInterpolation
+import com.digitalsamurai.noises.interpolators.dimensionals.two.bilinearInterpolation
 import org.junit.Test
 
 class BilinearInterpolatorTest {

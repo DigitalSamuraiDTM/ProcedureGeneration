@@ -1,4 +1,4 @@
-package com.digitalsamurai.noises.interpolators
+package com.digitalsamurai.noises.interpolators.dimensionals.two
 
 import com.digitalsamurai.noises.data.D2Point
 import com.digitalsamurai.noises.data.D3Point
@@ -13,7 +13,7 @@ import com.digitalsamurai.noises.data.D3Point
  * Для координат z (то есть для f(x,y)) такого условия может и не быть, выбираем как угодно и от этого зависит итоговая глубина (если так можно назвать) интерполяции
  *
  */
-public fun bilinearInterpolation(
+internal fun bilinearInterpolation(
     entryPoint: D2Point,
     pointLeftBottom: D3Point,
     pointRightBottom: D3Point,
