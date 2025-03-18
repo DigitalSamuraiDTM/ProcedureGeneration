@@ -1,40 +1,47 @@
 package com.digitalsamurai.jni_test.core.screen
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
-// TODO короче надо сделать так, чтобы в SCREEN передавалась не вьюмодель целиковая, а только STATE, SIDE EFFECT, и ACTIONS
-// в ACTIONS надо описать список доступных действий для экрана, чтобы не прокидывать в Screen viewmodelьку и можно было смотреть compose preview
-abstract class BaseScreen<VIEWMODEL : ScreenViewModel<*, *>> {
+import com.digitalsamurai.jni_test.core.viewmodel.UiActions
+import com.digitalsamurai.jni_test.core.viewmodel.UiEvent
+import com.digitalsamurai.jni_test.core.viewmodel.UiState
+import kotlinx.coroutines.flow.SharedFlow
+
+
+abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions> {
 
     protected abstract val routeName: String
-    public val screenRoute get() = ROOT + routeName
-
+    val screenRoute get() = ROOT + routeName
 
     /**
      * Entry point for screen from navigation
      */
     @Composable
-    public fun NavToScreen(navController: NavController) {
+    fun NavToScreen(navController: NavController) {
         val viewModel = MakeViewModel()
         //TODO: INJECT VIA HILT OR DAGGER
         viewModel.setNavController(navController)
+
+        val state = viewModel.state.collectAsState().value
+        val events = viewModel.events
+
         Surface(modifier = Modifier.fillMaxSize()) {
-            Screen(viewModel)
+            Screen(state = state, events = events, actions = viewModel.getActions())
         }
     }
 
     @Composable
-    protected abstract fun MakeViewModel(): VIEWMODEL
+    protected abstract fun MakeViewModel(): ScreenViewModel<STATE, EVENTS, ACTIONS>
 
     @Composable
-    public abstract fun Screen(viewModel: VIEWMODEL)
+    abstract fun Screen(state: STATE, events: SharedFlow<EVENTS>, actions: ACTIONS)
 
-    public companion object {
+    companion object {
         const val ROOT = "root/"
     }
 }

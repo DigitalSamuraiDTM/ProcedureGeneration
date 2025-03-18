@@ -7,9 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
+import kotlinx.coroutines.flow.SharedFlow
 
-
-object MainScreen : BaseScreen<MainScreenViewModel>() {
+object MainScreen : BaseScreen<MainScreenState, MainScreenEvent, MainScreenActions>() {
 
     override val routeName: String = "main"
 
@@ -19,9 +19,13 @@ object MainScreen : BaseScreen<MainScreenViewModel>() {
     }
 
     @Composable
-    override fun Screen(viewModel: MainScreenViewModel) {
+    override fun Screen(
+        state: MainScreenState,
+        events: SharedFlow<MainScreenEvent>,
+        actions: MainScreenActions,
+    ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            Button(onClick = {viewModel.generateNoise()}) { }
+            Button(onClick = { actions.generateNoises() }) { }
         }
     }
 }

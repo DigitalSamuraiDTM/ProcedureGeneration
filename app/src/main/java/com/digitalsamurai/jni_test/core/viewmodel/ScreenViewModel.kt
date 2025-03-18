@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-abstract class ScreenViewModel<STATE: UiState, EVENT: UiEvent>: ViewModel() {
+abstract class ScreenViewModel<STATE : UiState, EVENT : UiEvent, ACTIONS : UiActions> : ViewModel() {
 
 
     private var controller: NavController? = null
@@ -20,11 +20,14 @@ abstract class ScreenViewModel<STATE: UiState, EVENT: UiEvent>: ViewModel() {
 
     abstract fun initialState(): STATE
 
+    @Suppress("UNCHECKED_CAST")
+    open fun getActions(): ACTIONS = this as ACTIONS
+
     private val _state: MutableStateFlow<STATE> = MutableStateFlow(initialState())
-    public val state = _state
+    val state = _state
 
     private var _events = MutableSharedFlow<EVENT>(extraBufferCapacity = 1)
-    public val events = _events
+    val events = _events
 
     protected fun updateState(update: (STATE) -> STATE) {
         _state.update { state ->
@@ -36,7 +39,7 @@ abstract class ScreenViewModel<STATE: UiState, EVENT: UiEvent>: ViewModel() {
         _events.tryEmit(event)
     }
 
-    protected fun navigateTo(screen: BaseScreen<*>) {
+    protected fun navigateTo(screen: BaseScreen<*, *, *>) {
         controller?.let {
             it.navigate(screen.screenRoute)
         }

@@ -11,7 +11,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
     private val themeController: ThemeController,
-): ScreenViewModel<SettingsScreenState, SettingsScreenEvent>() {
+) : ScreenViewModel<SettingsScreenState, SettingsScreenEvent, SettingsScreenActions>(), SettingsScreenActions {
 
     override fun initialState(): SettingsScreenState = SettingsScreenState(
         modConverter = ModConverter.defaultState()
@@ -21,7 +21,7 @@ class SettingsScreenViewModel @Inject constructor(
         navigateTo(MainScreen)
     }
 
-    fun onConverterModSelected(mod: ModConverter.State.Mod) {
+    override fun onConverterModSelected(mod: ModConverter.State.Mod) {
         updateState { state ->
             themeController.setThemeMod(mod = mod.toThemeMod())
             state.copy(modConverter = state.modConverter.copy(selectedMod = mod))
@@ -29,7 +29,7 @@ class SettingsScreenViewModel @Inject constructor(
     }
 
     private fun ModConverter.State.Mod.toThemeMod(): ThemeMod {
-        return when(this) {
+        return when (this) {
             ModConverter.State.Mod.NDK -> ThemeMod.NDK
             ModConverter.State.Mod.KOTLIN -> ThemeMod.KOTLIN
         }

@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
+import com.digitalsamurai.jni_test.screens.linear.LinearScreen
 import com.digitalsamurai.jni_test.screens.main.MainScreen
 import com.digitalsamurai.jni_test.screens.settings.SettingsScreen
 
@@ -15,7 +16,7 @@ fun Navigation() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = startScreen.screenRoute) {
-        appsScreen.forEach {  screen ->
+        appsScreen.forEach { screen ->
             composable(route = screen.screenRoute) {
                 screen.NavToScreen(navController)
             }
@@ -23,6 +24,6 @@ fun Navigation() {
     }
 }
 
-val startScreen: BaseScreen<*> = MainScreen
+val startScreen: BaseScreen<*, *, *> = MainScreen
 
-val appsScreen = setOf<BaseScreen<*>>(SettingsScreen, MainScreen)
+val appsScreen = setOf<BaseScreen<*, *, *>>(SettingsScreen, MainScreen, LinearScreen)
