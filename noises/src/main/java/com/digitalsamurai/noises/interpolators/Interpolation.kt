@@ -3,11 +3,12 @@ package com.digitalsamurai.noises.interpolators
 import com.digitalsamurai.noises.data.D2Point
 import com.digitalsamurai.noises.data.D3Point
 import com.digitalsamurai.noises.interpolators.dimensionals.one.linearInterpolation
+import com.digitalsamurai.noises.interpolators.dimensionals.one.nearestNeighborInterpolation
 import com.digitalsamurai.noises.interpolators.dimensionals.two.bilinearInterpolation
 
-public object Interpolation {
+object Interpolation {
 
-    public object OneDimensional {
+    object OneDimensional {
         fun linear(
             x: Float,
             point1: D2Point,
@@ -17,10 +18,18 @@ public object Interpolation {
             point1 = point1,
             point2 = point2
         )
+
+        fun nearestNeighbor(
+            x: Float,
+            points: Set<D2Point>,
+        ) = nearestNeighborInterpolation(
+            x = x,
+            point = points
+        )
     }
 
-    public object TwoDimensional {
-        public fun bilinear(
+    object TwoDimensional {
+        fun bilinear(
             entryPoint: D2Point,
             pointLeftBottom: D3Point,
             pointRightBottom: D3Point,
