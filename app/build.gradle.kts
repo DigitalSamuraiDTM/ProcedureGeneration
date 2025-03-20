@@ -59,7 +59,7 @@ kapt {
 
 dependencies {
 
-    implementation(project(":noises"))
+    implementation(project(":math"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

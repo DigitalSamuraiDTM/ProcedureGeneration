@@ -1,6 +1,11 @@
 package com.digitalsamurai.jni_test.screens.linear
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,9 +22,15 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearAct
     @Composable
     override fun Screen(
         state: LinearScreenState,
-        event: SharedFlow<LinearScreenEvent>,
+        events: SharedFlow<LinearScreenEvent>,
         actions: LinearActions,
     ) {
+        Column(modifier = Modifier.fillMaxSize()) {
 
+            // generation status
+            // image
+            // settings
+
+        }
     }
 }

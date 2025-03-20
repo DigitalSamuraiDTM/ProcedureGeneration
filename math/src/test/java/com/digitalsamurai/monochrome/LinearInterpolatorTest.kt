@@ -1,7 +1,7 @@
 package com.digitalsamurai.monochrome
 
-import com.digitalsamurai.noises.data.D2Point
-import com.digitalsamurai.noises.interpolators.dimensionals.one.linearInterpolation
+import com.digitalsamurai.math.data.D2Point
+import com.digitalsamurai.math.interpolators.dimensionals.one.linearInterpolation
 import org.junit.Test
 
 /**

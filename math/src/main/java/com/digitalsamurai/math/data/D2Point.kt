@@ -1,4 +1,4 @@
-package com.digitalsamurai.noises.data
+package com.digitalsamurai.math.data
 
 public data class D2Point (
     public val x: Float,

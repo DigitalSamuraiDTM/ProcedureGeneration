@@ -1,7 +1,7 @@
-package com.digitalsamurai.noises.interpolators.dimensionals.two
+package com.digitalsamurai.math.interpolators.dimensionals.two
 
-import com.digitalsamurai.noises.data.D2Point
-import com.digitalsamurai.noises.data.D3Point
+import com.digitalsamurai.math.data.D2Point
+import com.digitalsamurai.math.data.D3Point
 
 /**
  * Билинейная интерполяция это фактически двумерная линейная интерполяция

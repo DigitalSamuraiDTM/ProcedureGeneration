@@ -1,6 +1,6 @@
-package com.digitalsamurai.noises.interpolators.dimensionals.one
+package com.digitalsamurai.math.interpolators.dimensionals.one
 
-import com.digitalsamurai.noises.data.D2Point
+import com.digitalsamurai.math.data.D2Point
 import kotlin.math.abs
 
 /**

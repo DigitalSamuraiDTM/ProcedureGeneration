@@ -1,7 +1,7 @@
 package com.digitalsamurai.monochrome
 
-import com.digitalsamurai.noises.data.D2Point
-import com.digitalsamurai.noises.interpolators.Interpolation
+import com.digitalsamurai.math.data.D2Point
+import com.digitalsamurai.math.interpolators.Interpolation
 import org.junit.Test
 
 class NearestInterpolationTest {

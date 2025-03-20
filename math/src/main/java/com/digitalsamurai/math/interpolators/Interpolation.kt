@@ -1,10 +1,10 @@
-package com.digitalsamurai.noises.interpolators
+package com.digitalsamurai.math.interpolators
 
-import com.digitalsamurai.noises.data.D2Point
-import com.digitalsamurai.noises.data.D3Point
-import com.digitalsamurai.noises.interpolators.dimensionals.one.linearInterpolation
-import com.digitalsamurai.noises.interpolators.dimensionals.one.nearestNeighborInterpolation
-import com.digitalsamurai.noises.interpolators.dimensionals.two.bilinearInterpolation
+import com.digitalsamurai.math.data.D2Point
+import com.digitalsamurai.math.data.D3Point
+import com.digitalsamurai.math.interpolators.dimensionals.one.linearInterpolation
+import com.digitalsamurai.math.interpolators.dimensionals.one.nearestNeighborInterpolation
+import com.digitalsamurai.math.interpolators.dimensionals.two.bilinearInterpolation
 
 object Interpolation {
 
