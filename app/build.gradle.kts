@@ -9,10 +9,10 @@ plugins {
 android {
     namespace = "com.digitalsamurai.jni_test"
     compileSdk = 35
-    ndkVersion =  "27.0.12077973"
+    ndkVersion = "27.0.12077973"
     defaultConfig {
         applicationId = "com.digitalsamurai.jni_test"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -77,6 +77,7 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
+    implementation(project(":algos"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.tooling.preview)
