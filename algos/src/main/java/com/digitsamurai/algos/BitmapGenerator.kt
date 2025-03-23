@@ -2,22 +2,22 @@ package com.digitsamurai.algos
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.util.Log
 import androidx.core.graphics.set
 import com.digitalsamurai.math.data.D2Point
 import com.digitalsamurai.math.data.D3Point
 import com.digitalsamurai.math.interpolators.Interpolation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BitmapGenerator @Inject constructor() {
 
-    suspend fun bilinearBitmap(size: Size, bilinearConfig: BilinearConfig): Bitmap {
+    suspend fun bilinearBitmap(size: Size, bilinearConfig: BilinearConfig): Bitmap = withContext(Dispatchers.Default) {
         val bitmap = Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888)
         val colorLB = bilinearConfig.colorLB
         val colorRB = bilinearConfig.colorRB
         val colorLT = bilinearConfig.colorLT
         val colorRT = bilinearConfig.colorRT
-        Log.d("OBAMA", "W: ${bitmap.width} H: ${bitmap.height}")
         repeat(bitmap.height) { h ->
             repeat(bitmap.width) { w ->
 
@@ -44,9 +44,6 @@ class BitmapGenerator @Inject constructor() {
                     pointLeftTop = D3Point(0f, size.height.toFloat(), colorLT.blue()),
                     pointRightTop = D3Point(size.width.toFloat(), size.height.toFloat(), colorRT.blue()),
                 )
-
-
-//                Log.d("OBAMA", "X: ${w} Y: ${h} COLOR: ${Color.valueOf(pixelColor.toInt())}")
                 bitmap.set(
                     x = w,
                     y = h,
@@ -54,7 +51,7 @@ class BitmapGenerator @Inject constructor() {
                 )
             }
         }
-        return bitmap
+        return@withContext bitmap
     }
 
 
