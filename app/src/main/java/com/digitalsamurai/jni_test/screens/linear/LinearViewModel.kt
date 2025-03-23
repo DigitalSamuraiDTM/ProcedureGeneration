@@ -3,6 +3,7 @@ package com.digitalsamurai.jni_test.screens.linear
 import android.graphics.Color
 import androidx.lifecycle.viewModelScope
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
+import com.digitalsamurai.jni_test.view.BitmapRenderer
 import com.digitsamurai.algos.BitmapGenerator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -14,11 +15,16 @@ class LinearViewModel @Inject constructor(
 ) : ScreenViewModel<LinearScreenState, LinearScreenEvent, LinearActions>(), LinearActions {
 
     override fun initialState(): LinearScreenState {
-        return LinearScreenState("")
+        return LinearScreenState(bitmapRendererState =
+            BitmapRenderer.default()
+        )
     }
 
-    init {
+    override fun onBitmapRendererClicked() {
+        TODO("Not yet implemented")
+    }
 
+    override fun onGenerateButtonClicked() {
         viewModelScope.launch {
             val bitmap = bitmapGenerator.bilinearBitmap(
                 size = BitmapGenerator.Size(1000, 1000),
@@ -29,7 +35,14 @@ class LinearViewModel @Inject constructor(
                     colorRT = Color.valueOf(0f, 1f, 0f),
                 )
             )
-            val b = bitmap
+            updateState {
+                it.copy(
+                    bitmapRendererState = BitmapRenderer.State.Content(
+                        bitmap = bitmap,
+                        id = "id1"
+                    )
+                )
+            }
         }
     }
 
