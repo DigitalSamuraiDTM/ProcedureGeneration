@@ -42,5 +42,13 @@ object Interpolation {
             pointLeftTop = pointLeftTop,
             pointRightTop = pointRightTop,
         )
+
+        fun nearestNeighbor(
+            entryPoint: D2Point,
+            points: Set<D3Point>,
+        ) = com.digitalsamurai.math.interpolators.dimensionals.two.nearestNeighborInterpolation(
+            entryPoint = entryPoint,
+            points = points
+        )
     }
 }
