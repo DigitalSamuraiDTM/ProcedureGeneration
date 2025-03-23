@@ -24,7 +24,7 @@ class LinearScreenScreenViewModel @Inject constructor(
     override fun onBitmapRendererClicked() {
         TODO("Not yet implemented")
     }
-
+    // TODO допилить экран шо бы можно было в приложеньке генерировать картинки
     override fun onGenerateButtonClicked() {
         viewModelScope.launch {
             val bitmap = bitmapGenerator.bilinearBitmap(
