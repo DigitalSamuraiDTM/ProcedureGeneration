@@ -54,11 +54,21 @@ class BitmapGenerator @Inject constructor() {
         return@withContext bitmap
     }
 
+    suspend fun neighborBitmap(size: Size, neighborConfig: NeighborConfig): Bitmap = withContext(Dispatchers.Default) {
+        TODO()
+    }
 
     data class Size(
         val width: Int,
         val height: Int,
     )
+
+    sealed class NeighborConfig {
+        data class Random(
+            val countPoints: Int,
+        ) : NeighborConfig()
+        // TODO ну кароче мануалочный конфиг надо сделать, где вводишь фикс количество цветов и еще один конфиг где прямо задаешь точки руками с цветами
+    }
 
     data class BilinearConfig(
         val colorLB: Color,

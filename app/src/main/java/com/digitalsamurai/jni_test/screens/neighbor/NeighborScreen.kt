@@ -1,4 +1,4 @@
-package com.digitalsamurai.jni_test.screens.linear
+package com.digitalsamurai.jni_test.screens.neighbor
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,22 +20,17 @@ import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.BitmapRenderer
 import kotlinx.coroutines.flow.SharedFlow
 
-object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScreenActions>() {
+object NeighborScreen : BaseScreen<NeighborScreenState, NeighborScreenEvent, NeighborScreenActions>() {
 
-    override val routeName: String = "interpolation/linear"
+    override val routeName: String = "interpolation/neighbor"
 
     @Composable
-    override fun MakeViewModel(): LinearScreenScreenViewModel {
+    override fun MakeViewModel(): NeighborScreenViewModel {
         return hiltViewModel()
     }
 
-
     @Composable
-    override fun Screen(
-        state: LinearScreenState,
-        events: SharedFlow<LinearScreenEvent>,
-        actions: LinearScreenActions,
-    ) {
+    override fun Screen(state: NeighborScreenState, events: SharedFlow<NeighborScreenEvent>, actions: NeighborScreenActions) {
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
         ) {

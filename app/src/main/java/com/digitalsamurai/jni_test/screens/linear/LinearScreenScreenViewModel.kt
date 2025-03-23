@@ -10,12 +10,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LinearViewModel @Inject constructor(
+class LinearScreenScreenViewModel @Inject constructor(
     private val bitmapGenerator: BitmapGenerator,
-) : ScreenViewModel<LinearScreenState, LinearScreenEvent, LinearActions>(), LinearActions {
+) : ScreenViewModel<LinearScreenState, LinearScreenEvent, LinearScreenActions>(), LinearScreenActions {
 
     override fun initialState(): LinearScreenState {
-        return LinearScreenState(bitmapRendererState =
+        return LinearScreenState(
+            bitmapRendererState =
             BitmapRenderer.default()
         )
     }
