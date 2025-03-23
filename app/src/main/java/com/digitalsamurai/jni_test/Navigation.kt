@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.screens.linear.LinearScreen
 import com.digitalsamurai.jni_test.screens.main.MainScreen
+import com.digitalsamurai.jni_test.screens.neighbor.NeighborScreen
 import com.digitalsamurai.jni_test.screens.settings.SettingsScreen
 
 
@@ -26,4 +27,4 @@ fun Navigation() {
 
 val startScreen: BaseScreen<*, *, *> = MainScreen
 
-val appsScreen = setOf<BaseScreen<*, *, *>>(SettingsScreen, MainScreen, LinearScreen)
+val appsScreen = setOf<BaseScreen<*, *, *>>(SettingsScreen, MainScreen, LinearScreen, NeighborScreen)

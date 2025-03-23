@@ -4,9 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.view.BitmapRenderer
 import com.digitsamurai.algos.BitmapGenerator
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class NeighborScreenViewModel @Inject constructor(
     private val bitmapGenerator: BitmapGenerator,
 ) : ScreenViewModel<NeighborScreenState, NeighborScreenEvent, NeighborScreenActions>(), NeighborScreenActions {
@@ -19,12 +21,16 @@ class NeighborScreenViewModel @Inject constructor(
     }
 
     override fun onBitmapRendererClicked() {
-        viewModelScope.launch {
-            val bitmap = bitmapGenerator
-        }
+        TODO("Not yet implemented")
     }
 
     override fun onGenerateButtonClicked() {
-        TODO("Not yet implemented")
+        viewModelScope.launch {
+            val bitmap = bitmapGenerator.neighborBitmap(
+                size = BitmapGenerator.Size(1000, 1000),
+                neighborConfig = BitmapGenerator.NeighborConfig.Random(20)
+            )
+            val c = bitmap
+        }
     }
 }

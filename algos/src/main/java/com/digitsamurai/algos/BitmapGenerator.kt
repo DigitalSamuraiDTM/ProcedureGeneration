@@ -86,7 +86,7 @@ class BitmapGenerator @Inject constructor() {
         repeat(bitmap.width) { w ->
             repeat(bitmap.height) { h ->
                 val nearestZ = Interpolation.TwoDimensional.nearestNeighbor(
-                    entryPoint = D2Point(w.toFloat(),h.toFloat()),
+                    entryPoint = D2Point(w.toFloat(), h.toFloat()),
                     points = entryPoints.keys
                 )
                 // используем z в качестве маркера, с помощью которого можно найти искомую точку, а по ее ключу достать цвет пикселя

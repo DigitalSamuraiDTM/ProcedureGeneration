@@ -2,7 +2,7 @@ package com.digitalsamurai.jni_test.screens.main
 
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.screens.linear.LinearScreen
-import com.digitalsamurai.jni_test.screens.settings.SettingsScreen
+import com.digitalsamurai.jni_test.screens.neighbor.NeighborScreen
 import com.digitalsamurai.jni_test.view.ImageSelector
 import com.digitalsamurai.jni_test.view.items.FeatureItem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +19,11 @@ class MainScreenViewModel @Inject constructor(
                 id = "linear_interpolation",
                 title = "Linear interpolation",
                 icon = null
+            ),
+            FeatureItem.State(
+                id = "neares_neighbor_interpolation",
+                title = "Nearest neighbor interpolation",
+                icon = null
             )
         )
     )
@@ -32,6 +37,10 @@ class MainScreenViewModel @Inject constructor(
         when (itemId) {
             "linear_interpolation" -> {
                 navigateTo(LinearScreen)
+            }
+
+            "neares_neighbor_interpolation" -> {
+                navigateTo(NeighborScreen)
             }
 
             else -> {
