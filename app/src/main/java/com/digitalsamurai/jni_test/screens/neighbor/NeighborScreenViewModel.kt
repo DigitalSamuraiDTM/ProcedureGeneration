@@ -30,7 +30,14 @@ class NeighborScreenViewModel @Inject constructor(
                 size = BitmapGenerator.Size(1000, 1000),
                 neighborConfig = BitmapGenerator.NeighborConfig.Random(20)
             )
-            val c = bitmap
+            updateState {
+                it.copy(
+                    bitmapRendererState = BitmapRenderer.State.Content(
+                        bitmap = bitmap,
+                        id = "id_example"
+                    )
+                )
+            }
         }
     }
 }
