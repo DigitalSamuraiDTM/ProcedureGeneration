@@ -2,6 +2,7 @@ package com.digitsamurai.algos
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import androidx.annotation.WorkerThread
 import androidx.core.graphics.set
 import com.digitalsamurai.math.data.D2Point
 import com.digitalsamurai.math.data.D3Point
@@ -9,56 +10,111 @@ import com.digitalsamurai.math.interpolators.Interpolation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.math.ceil
 import kotlin.random.Random
 
 // TODO: дело в том, что картинка считается по координатам с левого верхнего угла вниз, а интерполяция в декартовой системе считается с левого нижнего угла вниз
 //  из-за этого картинка получаются перевернутыми в действительности. Надо это исправить
 
+// TODO: билинейная интерполяция через матрицу может иметь погрешность вычислений в пиксель. Пример 1000х1000 разрешение матрицы 4
+//  получаем расположение точек 0,333,666,999 == 1000 пиксель забыли(
 
 class BitmapGenerator @Inject constructor() {
 
     private fun newBitmapTemplate(size: Size): Bitmap = Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888)
 
-    suspend fun bilinearBitmap(size: Size, bilinearConfig: BilinearConfig): Bitmap = withContext(Dispatchers.Default) {
+    @WorkerThread
+    suspend fun bilinearBitmap(size: Size, bilinearConfig: BilinearConfig.Matrix): Bitmap = with(Dispatchers.Default) {
         val bitmap = newBitmapTemplate(size)
-        val colorLB = bilinearConfig.colorLB
-        val colorRB = bilinearConfig.colorRB
-        val colorLT = bilinearConfig.colorLT
-        val colorRT = bilinearConfig.colorRT
+        val matrixColor = mutableListOf<List<Color>>()
+        repeat(bilinearConfig.resolution) { h ->
+            val row = mutableListOf<Color>()
+            repeat(bilinearConfig.resolution) { w ->
+                row.add(randomColor())
+            }
+            matrixColor.add(row)
+        }
+        // считаем ожидаемые размеры клеток, чтобы иметь возможность определять в какой клетке надо провести интерполяцию
+        val ceilX = (bitmap.width / (bilinearConfig.resolution - 1)).toFloat()
+        val ceilY = (bitmap.height / (bilinearConfig.resolution - 1)).toFloat()
+        repeat(bitmap.height) { y ->
+            repeat(bitmap.width) { x ->
+                // находим клетку, в которой находится точка
+                // ограничиваем погрешность делений вещественных чисел через coerseAtLeast, coerceAtMost.
+                val currentX = (ceil(x / ceilX) - 1).toInt()
+                    .coerceAtLeast(0)
+                    .coerceAtMost(bilinearConfig.resolution - 2)
+                val currentY = (ceil(y / ceilY) - 1).toInt()
+                    .coerceAtLeast(0)
+                    .coerceAtMost(bilinearConfig.resolution - 2)
+                // находим цвета и интерполируем
+                val ltColor = matrixColor[currentX][currentY]
+                val rbColor = matrixColor[currentX + 1][currentY + 1]
+                val rtColor = matrixColor[currentX + 1][currentY]
+                val lbColor = matrixColor[currentX][currentY + 1]
+                val color = bilinearWithColor(
+                    entryPoint = D2Point(x.toFloat(),y.toFloat()),
+                    colorLT = ColorPoint(color = ltColor, point = D2Point(currentX*ceilX,currentY*ceilY)),
+                    colorLB = ColorPoint(color = lbColor, point = D2Point(currentX*ceilX,(currentY+1)*ceilY)),
+                    colorRB = ColorPoint(color = rbColor, point = D2Point((currentX+1)*ceilX,(currentY+1)*ceilY)),
+                    colorRT = ColorPoint(color = rtColor, point = D2Point((currentX+1)*ceilX,currentY*ceilY)),
+                )
+                bitmap[x, y] = color.toArgb()
+            }
+        }
+
+        return@with bitmap
+    }
+
+    suspend fun bilinearBitmap(size: Size, bilinearConfig: BilinearConfig.FourPoints): Bitmap = withContext(Dispatchers.Default) {
+        val bitmap = newBitmapTemplate(size)
+        val colorLB = ColorPoint(point = D2Point(0f, 0f), color = bilinearConfig.colorLB)
+        val colorRB = ColorPoint(point = D2Point(size.width.toFloat(), 0f), color = bilinearConfig.colorRB)
+        val colorLT = ColorPoint(point = D2Point(0f, size.height.toFloat()), color = bilinearConfig.colorLT)
+        val colorRT = ColorPoint(point = D2Point(size.width.toFloat(), size.height.toFloat()), color = bilinearConfig.colorRT)
         repeat(bitmap.height) { h ->
             repeat(bitmap.width) { w ->
-
-                val red = Interpolation.TwoDimensional.bilinear(
-                    entryPoint = D2Point(w.toFloat(), h.toFloat()),
-                    pointLeftBottom = D3Point(0f, 0f, colorLB.red()),
-                    pointRightBottom = D3Point(size.width.toFloat(), 0f, colorRB.red()),
-                    pointLeftTop = D3Point(0f, size.height.toFloat(), colorLT.red()),
-                    pointRightTop = D3Point(size.width.toFloat(), size.height.toFloat(), colorRT.red()),
+                val color = bilinearWithColor(
+                    entryPoint = D2Point(w.toFloat(),h.toFloat()),
+                    colorLB, colorRB, colorLT, colorRT
                 )
-
-                val green = Interpolation.TwoDimensional.bilinear(
-                    entryPoint = D2Point(w.toFloat(), h.toFloat()),
-                    pointLeftBottom = D3Point(0f, 0f, colorLB.green()),
-                    pointRightBottom = D3Point(size.width.toFloat(), 0f, colorRB.green()),
-                    pointLeftTop = D3Point(0f, size.height.toFloat(), colorLT.green()),
-                    pointRightTop = D3Point(size.width.toFloat(), size.height.toFloat(), colorRT.green()),
-                )
-
-                val blue = Interpolation.TwoDimensional.bilinear(
-                    entryPoint = D2Point(w.toFloat(), h.toFloat()),
-                    pointLeftBottom = D3Point(0f, 0f, colorLB.blue()),
-                    pointRightBottom = D3Point(size.width.toFloat(), 0f, colorRB.blue()),
-                    pointLeftTop = D3Point(0f, size.height.toFloat(), colorLT.blue()),
-                    pointRightTop = D3Point(size.width.toFloat(), size.height.toFloat(), colorRT.blue()),
-                )
-                bitmap.set(
-                    x = w,
-                    y = h,
-                    color = Color.valueOf(red, green, blue).toArgb()
-                )
+                bitmap.set(x = w, y = h, color = color.toArgb())
             }
         }
         return@withContext bitmap
+    }
+
+    private fun bilinearWithColor(
+        entryPoint: D2Point,
+        colorLB: ColorPoint,
+        colorRB: ColorPoint,
+        colorLT: ColorPoint,
+        colorRT: ColorPoint,
+    ): Color {
+        val red = Interpolation.TwoDimensional.bilinear(
+            entryPoint = entryPoint,
+            pointLeftBottom = D3Point(colorLB.x, colorLB.y, colorLB.red()),
+            pointRightBottom = D3Point(colorRB.x, colorRB.y, colorRB.red()),
+            pointLeftTop = D3Point(colorLT.x, colorLT.y, colorLT.red()),
+            pointRightTop = D3Point(colorRT.x, colorRT.y, colorRT.red()),
+        )
+
+        val green = Interpolation.TwoDimensional.bilinear(
+            entryPoint = entryPoint,
+            pointLeftBottom = D3Point(colorLB.x, colorLB.y, colorLB.green()),
+            pointRightBottom = D3Point(colorRB.x, colorRB.y, colorRB.green()),
+            pointLeftTop = D3Point(colorLT.x, colorLT.y, colorLT.green()),
+            pointRightTop = D3Point(colorRT.x, colorRT.y, colorRT.green()),
+        )
+
+        val blue = Interpolation.TwoDimensional.bilinear(
+            entryPoint = entryPoint,
+            pointLeftBottom = D3Point(colorLB.x, colorLB.y, colorLB.blue()),
+            pointRightBottom = D3Point(colorRB.x, colorRB.y, colorRB.blue()),
+            pointLeftTop = D3Point(colorLT.x, colorLT.y, colorLT.blue()),
+            pointRightTop = D3Point(colorRT.x, colorRT.y, colorRT.blue()),
+        )
+        return Color.valueOf(red, green, blue)
     }
 
     suspend fun neighborBitmap(size: Size, neighborConfig: NeighborConfig): Bitmap = withContext(Dispatchers.Default) {
@@ -70,12 +126,7 @@ class BitmapGenerator @Inject constructor() {
                         x = Random.nextInt(size.width).toFloat(), // TODO локации точек могут повторяться, это плохо
                         y = Random.nextInt(size.height).toFloat(),
                         z = i.toFloat()
-                    )] = Color.valueOf(
-                        Random.nextInt(100) / 100f,
-                        Random.nextInt(100) / 100f,
-                        Random.nextInt(100) / 100f,
-                    )
-
+                    )] = randomColor()
                 }
                 points
             }
@@ -103,6 +154,14 @@ class BitmapGenerator @Inject constructor() {
         return@withContext bitmap
     }
 
+    private fun randomColor(accuracy: Int = 100): Color {
+        return Color.valueOf(
+            Random.nextInt(accuracy) / accuracy.toFloat(),
+            Random.nextInt(accuracy) / accuracy.toFloat(),
+            Random.nextInt(accuracy) / accuracy.toFloat(),
+        )
+    }
+
     data class Size(
         val width: Int,
         val height: Int,
@@ -115,11 +174,27 @@ class BitmapGenerator @Inject constructor() {
         // TODO ну кароче мануалочный конфиг надо сделать, где вводишь фикс количество цветов и еще один конфиг где прямо задаешь точки руками с цветами
     }
 
-    data class BilinearConfig(
-        val colorLB: Color,
-        val colorRB: Color,
-        val colorLT: Color,
-        val colorRT: Color,
-    )
+    sealed class BilinearConfig {
+        data class FourPoints(
+            val colorLB: Color,
+            val colorRB: Color,
+            val colorLT: Color,
+            val colorRT: Color,
+        )
 
+        data class Matrix(
+            val resolution: Int,
+        )
+    }
+
+    private inner class ColorPoint(
+        val point: D2Point,
+        val color: Color,
+    ) {
+        fun red() = color.red()
+        fun green() = color.green()
+        fun blue() = color.blue()
+        val x: Float get() = point.x
+        val y: Float get() = point.y
+    }
 }

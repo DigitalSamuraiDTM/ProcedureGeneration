@@ -27,14 +27,18 @@ class LinearScreenScreenViewModel @Inject constructor(
     // TODO допилить экран шо бы можно было в приложеньке генерировать картинки
     override fun onGenerateButtonClicked() {
         viewModelScope.launch {
+//            val bitmap = bitmapGenerator.bilinearBitmap(
+//                size = BitmapGenerator.Size(1000, 1000),
+//                bilinearConfig = BitmapGenerator.BilinearConfig.FourPoints(
+//                    colorLB = Color.valueOf(0f, 1f, 1f),
+//                    colorRB = Color.valueOf(0f, 0f, 1f),
+//                    colorLT = Color.valueOf(1f, 0f, 0f),
+//                    colorRT = Color.valueOf(0f, 1f, 0f),
+//                )
+//            )
             val bitmap = bitmapGenerator.bilinearBitmap(
-                size = BitmapGenerator.Size(1000, 1000),
-                bilinearConfig = BitmapGenerator.BilinearConfig(
-                    colorLB = Color.valueOf(0f, 1f, 1f),
-                    colorRB = Color.valueOf(0f, 0f, 1f),
-                    colorLT = Color.valueOf(1f, 0f, 0f),
-                    colorRT = Color.valueOf(0f, 1f, 0f),
-                )
+                size = BitmapGenerator.Size(1000,1000),
+                bilinearConfig = BitmapGenerator.BilinearConfig.Matrix(3)
             )
             updateState {
                 it.copy(
