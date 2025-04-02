@@ -2,6 +2,7 @@ package com.digitalsamurai.math.interpolators
 
 import com.digitalsamurai.math.data.D2Point
 import com.digitalsamurai.math.data.D3Point
+import com.digitalsamurai.math.interpolators.dimensionals.one.cubicInterpolation
 import com.digitalsamurai.math.interpolators.dimensionals.one.linearInterpolation
 import com.digitalsamurai.math.interpolators.dimensionals.one.nearestNeighborInterpolation
 import com.digitalsamurai.math.interpolators.dimensionals.two.bilinearInterpolation
@@ -25,6 +26,20 @@ object Interpolation {
         ) = nearestNeighborInterpolation(
             x = x,
             point = points
+        )
+
+        fun cubic(
+            x: Float,
+            yM1: Float,
+            y0: Float,
+            y1: Float,
+            y2: Float,
+        ) = cubicInterpolation(
+            entryX = x,
+            yM1 = yM1,
+            y0 = y0,
+            y1 = y1,
+            y2 = y2
         )
     }
 

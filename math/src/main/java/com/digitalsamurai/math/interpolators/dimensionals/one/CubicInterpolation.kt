@@ -45,9 +45,9 @@ internal fun cubicInterpolation(
     y1: Float,
     y2: Float,
 ): Float {
-    val a = entryX * entryX * entryX * (-0.5f * yM1 + 1.5f * y0 - 1.5f * y1 + 0.5f * y2)
-    val b = entryX * entryX * (yM1 - 2.5f * y0 + 2.0f * y1 - 0.5f * y2)
-    val c = entryX * (-0.5f * yM1 + 0.5f * y1)
+    val a = entryX * entryX * entryX * ((y0 - y1) / 2 + (y2 - yM1) / 6)
+    val b = entryX * entryX * (yM1 + y1 - 2 * y0) / 2
+    val c = entryX * (y1 - (2 * yM1 + 3 * y0 + y2) / 6)
     val d = y0
     return a + b + c + d
 }
