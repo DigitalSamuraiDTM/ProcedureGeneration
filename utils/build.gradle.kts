@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.digitsamurai.algos"
+    namespace = "com.digitsamurai.utils"
     compileSdk = 34
 
     defaultConfig {
@@ -31,14 +31,10 @@ android {
 
 dependencies {
 
-    implementation(libs.hilt.android)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(project(":math"))
-    implementation(project(":utils"))
 }

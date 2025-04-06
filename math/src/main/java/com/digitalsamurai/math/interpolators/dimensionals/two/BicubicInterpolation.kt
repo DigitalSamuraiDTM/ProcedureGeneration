@@ -7,6 +7,6 @@ import kotlin.math.ceil
 /**
  * Бикубическая интерполяция
  */
-fun bicubicInterpolation(entryPoint: D2Point, points: List<D3Point>): Float {
+fun bicubicInterpolation(entryPoint: D2Point, points: List<List<Float>>): Float {
     return 0f
 }

@@ -1,18 +1,30 @@
 package com.digitalsamurai.jni_test.screens.linear
 
-import android.graphics.Color
+import android.content.Context
+import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.view.BitmapRenderer
 import com.digitsamurai.algos.BitmapGenerator
+import com.digitsamurai.algos.BitmapRepository
+import com.digitsamurai.utils.extensions.generateName
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LinearScreenScreenViewModel @Inject constructor(
     private val bitmapGenerator: BitmapGenerator,
+    private val bitmapRepository: BitmapRepository,
+    @ApplicationContext
+    private val applicationContext: Context,
 ) : ScreenViewModel<LinearScreenState, LinearScreenEvent, LinearScreenActions>(), LinearScreenActions {
+
+    private var generatorJob: Job? = null
+    private val isAutosaveEnabled = true
 
     override fun initialState(): LinearScreenState {
         return LinearScreenState(
@@ -24,30 +36,32 @@ class LinearScreenScreenViewModel @Inject constructor(
     override fun onBitmapRendererClicked() {
         TODO("Not yet implemented")
     }
-    // TODO допилить экран шо бы можно было в приложеньке генерировать картинки
+
     override fun onGenerateButtonClicked() {
-        viewModelScope.launch {
-//            val bitmap = bitmapGenerator.bilinearBitmap(
-//                size = BitmapGenerator.Size(1000, 1000),
-//                bilinearConfig = BitmapGenerator.BilinearConfig.FourPoints(
-//                    colorLB = Color.valueOf(0f, 1f, 1f),
-//                    colorRB = Color.valueOf(0f, 0f, 1f),
-//                    colorLT = Color.valueOf(1f, 0f, 0f),
-//                    colorRT = Color.valueOf(0f, 1f, 0f),
-//                )
-//            )
+        generatorJob?.cancel()
+        generatorJob = viewModelScope.launch {
             val bitmap = bitmapGenerator.bilinearBitmap(
-                size = BitmapGenerator.Size(1000,1000),
+                size = BitmapGenerator.Size(1000, 1000),
                 bilinearConfig = BitmapGenerator.BilinearConfig.Matrix(3)
             )
+            val bitmapName = bitmap.generateName()
             updateState {
                 it.copy(
                     bitmapRendererState = BitmapRenderer.State.Content(
                         bitmap = bitmap,
-                        id = "id1"
+                        id = bitmapName
                     )
                 )
             }
+            if (isAutosaveEnabled) autosaveBitmap(bitmap, bitmapName)
+        }
+    }
+
+    private fun autosaveBitmap(bitmap: Bitmap, name: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val isSaved = bitmapRepository.set(bitmap, BitmapRepository.Name.Value(name))
+            val event = if (isSaved) LinearScreenEvent.BitmapSaving.Success(name) else LinearScreenEvent.BitmapSaving.Failed
+            event(event)
         }
     }
 

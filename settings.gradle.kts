@@ -29,3 +29,4 @@ rootProject.name = "jni_test"
 include(":app")
 include(":math")
 include(":algos")
+include(":utils")

@@ -1,5 +1,7 @@
 package com.digitalsamurai.jni_test.screens.main
 
+import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -50,6 +52,7 @@ object MainScreen : BaseScreen<MainScreenState, MainScreenEvent, MainScreenActio
                 }
             }
         }
+        Log.d("OBAMA", "${LocalContext.current.getDir("bitmaps", Context.MODE_PRIVATE).list().joinToString(", ")}")
         Box(modifier = Modifier.fillMaxSize()) {
             LazyVerticalGrid(
                 modifier = Modifier.fillMaxSize(),

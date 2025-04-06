@@ -78,6 +78,7 @@ dependencies {
     androidTestImplementation(composeBom)
 
     implementation(project(":algos"))
+    implementation(project(":utils"))
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.material3)
