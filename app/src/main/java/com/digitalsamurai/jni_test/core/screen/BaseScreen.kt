@@ -1,16 +1,19 @@
 package com.digitalsamurai.jni_test.core.screen
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.core.viewmodel.UiActions
 import com.digitalsamurai.jni_test.core.viewmodel.UiEvent
 import com.digitalsamurai.jni_test.core.viewmodel.UiState
-import kotlinx.coroutines.flow.SharedFlow
 
 
 abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions> {
@@ -30,16 +33,28 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
         val state = viewModel.state.collectAsState().value
         val events = viewModel.events
 
+        val snackbarHostState = remember { SnackbarHostState() }
+
+        // events flow collecting
+        LaunchedEffect(Unit) {
+            events.collect { event ->
+                onEvent(event, snackbarHostState)
+            }
+        }
+
         Surface(modifier = Modifier.fillMaxSize()) {
-            Screen(state = state, events = events, actions = viewModel.getActions())
+            SnackbarHost(snackbarHostState, modifier = Modifier.fillMaxSize())
+            Screen(state = state, actions = viewModel.getActions())
         }
     }
+
+    protected abstract suspend fun onEvent(event: EVENTS, snackbarHostState: SnackbarHostState)
 
     @Composable
     protected abstract fun MakeViewModel(): ScreenViewModel<STATE, EVENTS, ACTIONS>
 
     @Composable
-    abstract fun Screen(state: STATE, events: SharedFlow<EVENTS>, actions: ACTIONS)
+    abstract fun Screen(state: STATE, actions: ACTIONS)
 
     companion object {
         const val ROOT = "root/"

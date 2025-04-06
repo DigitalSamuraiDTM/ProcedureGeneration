@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,7 +19,6 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.BitmapRenderer
-import kotlinx.coroutines.flow.SharedFlow
 
 object NeighborScreen : BaseScreen<NeighborScreenState, NeighborScreenEvent, NeighborScreenActions>() {
 
@@ -29,8 +29,12 @@ object NeighborScreen : BaseScreen<NeighborScreenState, NeighborScreenEvent, Nei
         return hiltViewModel()
     }
 
+    override suspend fun onEvent(event: NeighborScreenEvent, snackbarHostState: SnackbarHostState) {
+
+    }
+
     @Composable
-    override fun Screen(state: NeighborScreenState, events: SharedFlow<NeighborScreenEvent>, actions: NeighborScreenActions) {
+    override fun Screen(state: NeighborScreenState, actions: NeighborScreenActions) {
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -57,9 +61,11 @@ object NeighborScreen : BaseScreen<NeighborScreenState, NeighborScreenEvent, Nei
                     onClick = actions::onBitmapRendererClicked
                 )
 
-                Box(modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+                ) {
 
                 }
             }

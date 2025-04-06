@@ -1,6 +1,5 @@
 package com.digitalsamurai.jni_test.screens.linear
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,20 +8,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.BitmapRenderer
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
 
 object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScreenActions>() {
 
@@ -33,26 +30,27 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScr
         return hiltViewModel()
     }
 
+    override suspend fun onEvent(event: LinearScreenEvent, snackbarHostState: SnackbarHostState) {
+        when (event) {
+            LinearScreenEvent.BitmapSaving.Failed -> snackbarHostState.showSnackbar(
+                message = "Autosaving failed",
+                actionLabel = "Obama",
+                duration = SnackbarDuration.Short
+            )
+
+            is LinearScreenEvent.BitmapSaving.Success -> snackbarHostState.showSnackbar(
+                message = "Autosaved!",
+                actionLabel = "Obama",
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
 
     @Composable
     override fun Screen(
         state: LinearScreenState,
-        events: SharedFlow<LinearScreenEvent>,
         actions: LinearScreenActions,
     ) {
-        val localContext = LocalContext.current
-        LaunchedEffect(Unit) {
-            events.collect { event ->
-                when(event) {
-                    LinearScreenEvent.BitmapSaving.Failed -> {
-                        Toast.makeText(localContext, "Failed", Toast.LENGTH_SHORT).show()
-                    }
-                    is LinearScreenEvent.BitmapSaving.Success -> {
-                        Toast.makeText(localContext, "Autosaved!", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -79,9 +77,11 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScr
                     onClick = actions::onBitmapRendererClicked
                 )
 
-                Box(modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize()) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxSize()
+                ) {
 
                 }
             }

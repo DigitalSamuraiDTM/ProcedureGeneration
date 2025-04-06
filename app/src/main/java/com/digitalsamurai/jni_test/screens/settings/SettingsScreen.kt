@@ -3,6 +3,7 @@ package com.digitalsamurai.jni_test.screens.settings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -10,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.ModConverter
-import kotlinx.coroutines.flow.SharedFlow
 
 
 object SettingsScreen : BaseScreen<SettingsScreenState, SettingsScreenEvent, SettingsScreenActions>() {
@@ -22,10 +22,13 @@ object SettingsScreen : BaseScreen<SettingsScreenState, SettingsScreenEvent, Set
         return hiltViewModel()
     }
 
+    override suspend fun onEvent(event: SettingsScreenEvent, snackbarHostState: SnackbarHostState) {
+
+    }
+
     @Composable
     override fun Screen(
         state: SettingsScreenState,
-        events: SharedFlow<SettingsScreenEvent>,
         actions: SettingsScreenActions,
     ) {
         Box(
