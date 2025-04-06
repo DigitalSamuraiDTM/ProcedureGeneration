@@ -29,7 +29,7 @@ object NeighborScreen : BaseScreen<NeighborScreenState, NeighborScreenEvent, Nei
         return hiltViewModel()
     }
 
-    override suspend fun onEvent(event: NeighborScreenEvent, snackbarHostState: SnackbarHostState) {
+    override suspend fun onEvent(event: NeighborScreenEvent, actions: NeighborScreenActions, snackbar: SnackbarHostState) {
 
     }
 

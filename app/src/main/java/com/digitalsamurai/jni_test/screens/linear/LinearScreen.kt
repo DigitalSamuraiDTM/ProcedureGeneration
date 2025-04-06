@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,19 +31,21 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScr
         return hiltViewModel()
     }
 
-    override suspend fun onEvent(event: LinearScreenEvent, snackbarHostState: SnackbarHostState) {
+    override suspend fun onEvent(event: LinearScreenEvent, actions: LinearScreenActions, snackbar: SnackbarHostState) {
         when (event) {
-            LinearScreenEvent.BitmapSaving.Failed -> snackbarHostState.showSnackbar(
+            LinearScreenEvent.BitmapSaving.Failed -> snackbar.showSnackbar(
                 message = "Autosaving failed",
-                actionLabel = "Obama",
-                duration = SnackbarDuration.Short
+                duration = SnackbarDuration.Long
             )
 
-            is LinearScreenEvent.BitmapSaving.Success -> snackbarHostState.showSnackbar(
-                message = "Autosaved!",
-                actionLabel = "Obama",
-                duration = SnackbarDuration.Short
-            )
+            is LinearScreenEvent.BitmapSaving.Success -> {
+                val actionResult = snackbar.showSnackbar(
+                    message = "Autosaved!",
+                    actionLabel = "Cancel",
+                    duration = SnackbarDuration.Short
+                )
+                if (actionResult == SnackbarResult.ActionPerformed) actions.undoImageSaving(event.fileName)
+            }
         }
     }
 

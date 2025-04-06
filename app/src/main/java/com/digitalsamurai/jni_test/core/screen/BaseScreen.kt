@@ -35,10 +35,16 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
 
         val snackbarHostState = remember { SnackbarHostState() }
 
+        //TODO: интересно, что показ снекбара работает под мьютексом и может быть показан всегда один снекбар
+        // если показать снекбар без таймаута с дисмисом по экшену, то это приведет к тому, что мы заблокируем чтение событий пока пользователь не примет действие
+        // то есть одновременно мы можем показывать лишь одно действие. Надо подумать ок ли это)
+
+        // TODO: дизайн снекбаров поправить, а то кринжово выглядят
+
         // events flow collecting
         LaunchedEffect(Unit) {
             events.collect { event ->
-                onEvent(event, snackbarHostState)
+                onEvent(event, viewModel.getActions(), snackbarHostState)
             }
         }
 
@@ -48,7 +54,7 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
         }
     }
 
-    protected abstract suspend fun onEvent(event: EVENTS, snackbarHostState: SnackbarHostState)
+    protected abstract suspend fun onEvent(event: EVENTS, actions: ACTIONS, snackbar: SnackbarHostState)
 
     @Composable
     protected abstract fun MakeViewModel(): ScreenViewModel<STATE, EVENTS, ACTIONS>

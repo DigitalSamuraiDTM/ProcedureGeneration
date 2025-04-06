@@ -28,9 +28,9 @@ object MainScreen : BaseScreen<MainScreenState, MainScreenEvent, MainScreenActio
         return viewModel()
     }
 
-    override suspend fun onEvent(event: MainScreenEvent, snackbarHostState: SnackbarHostState) {
+    override suspend fun onEvent(event: MainScreenEvent, actions: MainScreenActions, snackbar: SnackbarHostState) {
         when (event) {
-            is MainScreenEvent.UnknownFeature -> snackbarHostState.showSnackbar(
+            is MainScreenEvent.UnknownFeature -> snackbar.showSnackbar(
                 message = "Unknown feature!",
                 actionLabel = "Obama",
                 duration = SnackbarDuration.Short

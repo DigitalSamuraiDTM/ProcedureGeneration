@@ -29,7 +29,12 @@ class BitmapRepository @Inject constructor(
         return bitmap.compress(Bitmap.CompressFormat.PNG, 100, file.outputStream())
     }
 
-    fun get(name: String): Bitmap? {
+    fun delete(name: String): Boolean {
+        val file = File(storage, name)
+        return file.delete()
+    }
+
+    fun get(name: String): Bitmap {
         val file = File(storage, name)
         return TODO()
     }

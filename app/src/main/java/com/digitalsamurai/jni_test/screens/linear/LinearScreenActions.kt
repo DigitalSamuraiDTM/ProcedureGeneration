@@ -5,4 +5,5 @@ import com.digitalsamurai.jni_test.core.viewmodel.UiActions
 interface LinearScreenActions : UiActions {
     fun onBitmapRendererClicked()
     fun onGenerateButtonClicked()
+    fun undoImageSaving(id: String)
 }

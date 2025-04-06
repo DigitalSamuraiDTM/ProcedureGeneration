@@ -22,7 +22,7 @@ object SettingsScreen : BaseScreen<SettingsScreenState, SettingsScreenEvent, Set
         return hiltViewModel()
     }
 
-    override suspend fun onEvent(event: SettingsScreenEvent, snackbarHostState: SnackbarHostState) {
+    override suspend fun onEvent(event: SettingsScreenEvent, actions: SettingsScreenActions, snackbar: SnackbarHostState) {
 
     }
 

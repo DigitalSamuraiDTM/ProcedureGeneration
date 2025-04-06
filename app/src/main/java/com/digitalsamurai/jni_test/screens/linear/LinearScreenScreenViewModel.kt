@@ -2,6 +2,7 @@ package com.digitalsamurai.jni_test.screens.linear
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.view.BitmapRenderer
@@ -35,6 +36,13 @@ class LinearScreenScreenViewModel @Inject constructor(
 
     override fun onBitmapRendererClicked() {
         TODO("Not yet implemented")
+    }
+
+    override fun undoImageSaving(id: String) {
+        viewModelScope.launch {
+            val isDeleted = bitmapRepository.delete(id)
+            Log.d("OBAMA", "Image delete ${isDeleted}: ${id}")
+        }
     }
 
     override fun onGenerateButtonClicked() {
