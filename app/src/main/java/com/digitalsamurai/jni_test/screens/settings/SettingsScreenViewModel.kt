@@ -1,9 +1,9 @@
 package com.digitalsamurai.jni_test.screens.settings
 
-import com.digitalsamurai.jni_test.ThemeController
-import com.digitalsamurai.jni_test.ThemeMod
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.screens.main.MainScreen
+import com.digitalsamurai.jni_test.theme.ThemeController
+import com.digitalsamurai.jni_test.theme.ThemeMod
 import com.digitalsamurai.jni_test.view.ModConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

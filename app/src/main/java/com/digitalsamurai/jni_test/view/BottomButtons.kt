@@ -21,20 +21,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.digitalsamurai.jni_test.ThemeMod
 import com.digitalsamurai.jni_test.theme.AppTheme
+import com.digitalsamurai.jni_test.theme.ThemeMod
 import com.digitalsamurai.jni_test.theme.kotlinButtonBackground
 import com.digitalsamurai.jni_test.theme.ndkButtonBackground
 
-public object ModConverter {
+object ModConverter {
 
     @Composable
-    public operator fun invoke(
+    operator fun invoke(
         modifier: Modifier = Modifier,
         state: State,
-        onModSelected: (State.Mod) -> Unit
+        onModSelected: (State.Mod) -> Unit,
     ) {
-        val ndkWidthWeight: Float  by animateFloatAsState(if (state.selectedMod == State.Mod.NDK || state.selectedMod == null) 1f else 0.4f)
+        val ndkWidthWeight: Float by animateFloatAsState(if (state.selectedMod == State.Mod.NDK || state.selectedMod == null) 1f else 0.4f)
         val kotlinWidthWeight: Float by animateFloatAsState(if (state.selectedMod == State.Mod.KOTLIN || state.selectedMod == null) 1f else 0.4f)
         Row(modifier = modifier) {
             NdkButton(
@@ -54,19 +54,20 @@ public object ModConverter {
             }
         }
     }
-    public data class State(
-        public val selectedMod: Mod?
+
+    data class State(
+        val selectedMod: Mod?,
     ) {
-        public enum class Mod {
+        enum class Mod {
             NDK, KOTLIN
         }
     }
 
-    public fun defaultState(): State = State(null)
+    fun defaultState(): State = State(null)
 }
 
 @Composable
-public fun NdkButton(modifier: Modifier, onClick: () -> Unit) {
+fun NdkButton(modifier: Modifier, onClick: () -> Unit) {
     Button(
         modifier = modifier,
         onClick = onClick,
@@ -82,7 +83,7 @@ public fun NdkButton(modifier: Modifier, onClick: () -> Unit) {
 }
 
 @Composable
-public fun KotlinButton(modifier: Modifier, onClick: () -> Unit) {
+fun KotlinButton(modifier: Modifier, onClick: () -> Unit) {
     Button(
         modifier = modifier,
         onClick = onClick,

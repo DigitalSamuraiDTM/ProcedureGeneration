@@ -1,4 +1,4 @@
-package com.digitalsamurai.jni_test
+package com.digitalsamurai.jni_test.theme
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

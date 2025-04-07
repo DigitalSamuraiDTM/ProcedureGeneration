@@ -26,17 +26,17 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.digitalsamurai.jni_test.ThemeMod
 import com.digitalsamurai.jni_test.theme.AppTheme
+import com.digitalsamurai.jni_test.theme.ThemeMod
 
-public object ImageSelector {
+object ImageSelector {
 
     @Composable
     operator fun invoke(
         state: State,
         modifier: Modifier = Modifier,
         onImageSelectClicked: () -> Unit,
-        onImageDrop: () -> Unit
+        onImageDrop: () -> Unit,
     ) {
         Card(
             modifier = modifier,
@@ -51,7 +51,9 @@ public object ImageSelector {
                     contentDescription = "Selected image"
                 )
             } else {
-                Box(modifier = Modifier.fillMaxSize().clickable(true, onClick = onImageSelectClicked)) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(true, onClick = onImageSelectClicked)) {
                     Column(
                         modifier = Modifier
                             .wrapContentHeight()
@@ -78,12 +80,12 @@ public object ImageSelector {
         }
     }
 
-    public data class State(
+    data class State(
         @DrawableRes
-        val image: Int?
+        val image: Int?,
     )
 
-    public fun defaultState(): State = State(
+    fun defaultState(): State = State(
         image = null
     )
 }

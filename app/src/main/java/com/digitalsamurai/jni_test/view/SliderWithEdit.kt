@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.digitalsamurai.jni_test.ThemeMod
 import com.digitalsamurai.jni_test.theme.AppTheme
+import com.digitalsamurai.jni_test.theme.ThemeMod
 
 object SliderWithEdit {
 
@@ -56,7 +56,10 @@ private fun Preview() {
         Surface(modifier = Modifier.fillMaxSize()) {
             Box(modifier = Modifier.fillMaxSize()) {
                 SliderWithEdit(
-                    modifier = Modifier.align(Alignment.Center).fillMaxWidth().height(30.dp),
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .fillMaxWidth()
+                        .height(30.dp),
                     state = SliderWithEdit.State(550f)
                 ) { v ->
 
