@@ -1,14 +1,14 @@
 package com.digitalsamurai.jni_test.main
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var themeController: ThemeController
 
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -48,8 +47,10 @@ class MainActivity : AppCompatActivity() {
                         items = bottomBarItems
                     )
                 }) { paddings ->
-                    Navigation(navController)
-
+                    Navigation(
+                        modifier = Modifier.padding(paddings),
+                        navController = navController
+                    )
                 }
             }
         }
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         BottomBar.StateItem(
             route = MainScreen.screenRoute,
             title = "Generation",
-            icon = Icons.Default.FavoriteBorder
+            icon = Icons.Default.Favorite
         ),
         BottomBar.StateItem(
             route = SettingsScreen.screenRoute,
