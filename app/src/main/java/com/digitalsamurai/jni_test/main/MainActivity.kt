@@ -1,8 +1,13 @@
 package com.digitalsamurai.jni_test.main
 
 import android.os.Bundle
+import android.util.Log
+import android.view.Window
+import android.view.WindowManager
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,6 +18,8 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
@@ -37,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val navController = rememberNavController()
             val theme = themeController.currentMode.collectAsState()
-            AppTheme(mod = theme.value) {
+            val scheme = AppTheme(mod = theme.value) {
                 Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
                     BottomBar(
                         modifier = Modifier
@@ -53,6 +60,12 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
             }
+            // выставляем ручками. Эта логика прокручивается только при реальной смене цвета и не обновляет цвет если не надо
+            window.navigationBarColor = scheme.surfaceContainer.toArgb()
+            // todo починить, чет не хочет работать
+            window.statusBarColor = scheme.background.toArgb()
+            val insetController = WindowCompat.getInsetsController(window, window.decorView)
+            insetController.isAppearanceLightStatusBars = !isSystemInDarkTheme()
         }
     }
 
