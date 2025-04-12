@@ -10,10 +10,11 @@ import com.digitalsamurai.jni_test.screens.linear.LinearScreen
 import com.digitalsamurai.jni_test.screens.main.MainScreen
 import com.digitalsamurai.jni_test.screens.neighbor.NeighborScreen
 import com.digitalsamurai.jni_test.screens.settings.SettingsScreen
+import com.digitalsamurai.jni_test.screens.storage.GalleryScreen
 
 
 @Composable
-fun Navigation(modifier: Modifier,navController: NavHostController) {
+fun Navigation(modifier: Modifier, navController: NavHostController) {
     NavHost(modifier = modifier, navController = navController, startDestination = startScreen.screenRoute) {
         appsScreen.forEach { screen ->
             composable(route = screen.screenRoute) {
@@ -25,4 +26,4 @@ fun Navigation(modifier: Modifier,navController: NavHostController) {
 
 val startScreen: BaseScreen<*, *, *> = MainScreen
 
-val appsScreen = setOf<BaseScreen<*, *, *>>(SettingsScreen, MainScreen, LinearScreen, NeighborScreen)
+val appsScreen = setOf<BaseScreen<*, *, *>>(SettingsScreen, MainScreen, LinearScreen, NeighborScreen, GalleryScreen)

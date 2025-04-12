@@ -1,11 +1,7 @@
 package com.digitalsamurai.jni_test.main
 
 import android.os.Bundle
-import android.util.Log
-import android.view.Window
-import android.view.WindowManager
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,19 +9,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.digitalsamurai.jni_test.Navigation
 import com.digitalsamurai.jni_test.screens.main.MainScreen
 import com.digitalsamurai.jni_test.screens.settings.SettingsScreen
+import com.digitalsamurai.jni_test.screens.storage.GalleryScreen
 import com.digitalsamurai.jni_test.theme.AppTheme
 import com.digitalsamurai.jni_test.theme.ThemeController
 import com.digitalsamurai.jni_test.view.bottombar.BottomBar
@@ -80,6 +77,11 @@ class MainActivity : AppCompatActivity() {
             title = "Settings",
             icon = Icons.Default.Settings
         ),
+        BottomBar.StateItem(
+            route = GalleryScreen.screenRoute,
+            title = "Gallery",
+            icon = Icons.AutoMirrored.Filled.List
+        )
     )
 
 

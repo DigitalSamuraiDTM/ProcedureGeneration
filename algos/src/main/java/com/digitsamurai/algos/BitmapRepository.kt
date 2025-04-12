@@ -2,6 +2,7 @@ package com.digitsamurai.algos
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.annotation.WorkerThread
 import com.digitsamurai.utils.extensions.generateName
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -36,14 +37,18 @@ class BitmapRepository @Inject constructor(
 
     fun get(name: String): Bitmap {
         val file = File(storage, name)
-        return TODO()
+        val bitmap = BitmapFactory.decodeStream(file.inputStream())
+        return bitmap
     }
 
-    fun get(name: Name.Value): Bitmap? = get(name.name)
+    fun get(name: Name.Value): Bitmap = get(name.name)
 
-    fun getNames(): List<String> {
+    /**
+     * file path , bitmap id
+     */
+    fun getMetaInfo(): List<Pair<String, String>> {
         val storage = context.getDir(STORAGE_NAME, Context.MODE_PRIVATE)
-        return storage.list()?.toList() ?: emptyList()
+        return storage.listFiles()?.map { file -> Pair(file.path, file.name) } ?: emptyList()
     }
 
     private companion object {

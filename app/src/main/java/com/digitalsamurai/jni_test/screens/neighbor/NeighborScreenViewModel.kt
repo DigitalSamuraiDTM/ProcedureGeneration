@@ -20,7 +20,7 @@ class NeighborScreenViewModel @Inject constructor(
         )
     }
 
-    override fun onBitmapRendererClicked() {
+    override fun onBitmapRendererClicked(id: String) {
         TODO("Not yet implemented")
     }
 
@@ -32,7 +32,7 @@ class NeighborScreenViewModel @Inject constructor(
             )
             updateState {
                 it.copy(
-                    bitmapRendererState = BitmapRenderer.State.Content(
+                    bitmapRendererState = BitmapRenderer.State.ContentBitmap(
                         bitmap = bitmap,
                         id = "id_example"
                     )

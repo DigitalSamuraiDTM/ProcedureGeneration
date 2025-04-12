@@ -18,6 +18,9 @@ import com.digitalsamurai.jni_test.core.viewmodel.UiState
 
 abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions> {
 
+    /**
+     * WITHOUT SLASH///// !
+     */
     protected abstract val routeName: String
     val screenRoute get() = ROOT + routeName
 

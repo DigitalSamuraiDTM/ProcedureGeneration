@@ -34,7 +34,7 @@ class LinearScreenScreenViewModel @Inject constructor(
         )
     }
 
-    override fun onBitmapRendererClicked() {
+    override fun onBitmapRendererClicked(id: String) {
         TODO("Not yet implemented")
     }
 
@@ -55,7 +55,7 @@ class LinearScreenScreenViewModel @Inject constructor(
             val bitmapName = bitmap.generateName()
             updateState {
                 it.copy(
-                    bitmapRendererState = BitmapRenderer.State.Content(
+                    bitmapRendererState = BitmapRenderer.State.ContentBitmap(
                         bitmap = bitmap,
                         id = bitmapName
                     )

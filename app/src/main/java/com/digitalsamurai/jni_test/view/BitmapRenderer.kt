@@ -11,16 +11,29 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
+import com.digitsamurai.utils.extensions.loadBitmapFromStorage
 
 object BitmapRenderer {
 
     sealed interface State {
-        data object Empty: State
-        data class Content(
+        val id: String
+
+        // TODO: выпилить нахуй Empty State, картинка должна загружаться по-человечески и без пустот, вместо пустоты что-то другое показывать
+        data object Empty : State {
+            override val id: String = "empty"
+        }
+
+        data class ContentBitmap(
             val bitmap: Bitmap,
-            val id: String,
-        ): State
+            override val id: String,
+        ) : State
+
+        data class ContentBitmapPath(
+            val path: String,
+            override val id: String,
+        ) : State
+
     }
 
     fun default(): State = State.Empty
@@ -29,10 +42,11 @@ object BitmapRenderer {
     operator fun invoke(
         modifier: Modifier = Modifier,
         state: State,
-        onClick: () -> Unit,
+        onClick: (id: String) -> Unit,
     ) {
-        Box(modifier = modifier.clickable { onClick() }) {
-            when(state) {
+        val context = LocalContext.current
+        Box(modifier = modifier.clickable { onClick(state.id) }) {
+            when (state) {
                 State.Empty -> {
                     Icon(
                         modifier = Modifier.fillMaxSize(),
@@ -41,10 +55,20 @@ object BitmapRenderer {
                     )
 
                 }
-                is State.Content -> {
+
+                is State.ContentBitmap -> {
                     Image(
                         modifier = Modifier.fillMaxSize(),
                         bitmap = state.bitmap.asImageBitmap(),
+                        contentDescription = state.id
+                    )
+                }
+
+                is State.ContentBitmapPath -> {
+                    val bitmap = context.loadBitmapFromStorage(state.path)
+                    Image(
+                        modifier = Modifier.fillMaxSize(),
+                        bitmap = bitmap.asImageBitmap(),
                         contentDescription = state.id
                     )
                 }
