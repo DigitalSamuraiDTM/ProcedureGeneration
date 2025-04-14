@@ -7,6 +7,7 @@ import androidx.annotation.WorkerThread
 import com.digitsamurai.utils.extensions.generateName
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 @WorkerThread
@@ -15,6 +16,8 @@ class BitmapRepository @Inject constructor(
 ) {
 
     private val storage = context.getDir(STORAGE_NAME, Context.MODE_PRIVATE)
+
+    private val cache = ConcurrentHashMap<String, Bitmap>()
 
     sealed class Name {
         data object Auto : Name()
@@ -25,20 +28,25 @@ class BitmapRepository @Inject constructor(
         val fileName = when (name) {
             Name.Auto -> bitmap.generateName()
             is Name.Value -> name.name
-        }
+        } + PNG_EXTENSION
         val file = File(storage, fileName)
         return bitmap.compress(Bitmap.CompressFormat.PNG, 100, file.outputStream())
+            .also { cache[fileName] = bitmap }
     }
 
-    fun delete(name: String): Boolean {
-        val file = File(storage, name)
-        return file.delete()
+    fun delete(id: String): Boolean {
+        val file = File(storage, id)
+        return file.delete().also { cache.remove(id) }
     }
 
-    fun get(name: String): Bitmap {
-        val file = File(storage, name)
+    fun get(id: String): Bitmap {
+        // без синхронизации может не быть попадания в кеш, если читать один файл двумя потоками, так как чтение файла неатомарно, но
+        // синхронизация будет хуже, так как будет синхронизация чтения с диска, а эт кабздец
+        // поэтому мне проще случайно считать один и тот же файл с диска два раза
+        if (cache[id] != null) return cache[id]!!
+        val file = File(storage, id)
         val bitmap = BitmapFactory.decodeStream(file.inputStream())
-        return bitmap
+        return bitmap.also { cache[id] = it }
     }
 
     fun get(name: Name.Value): Bitmap = get(name.name)
@@ -53,5 +61,6 @@ class BitmapRepository @Inject constructor(
 
     private companion object {
         const val STORAGE_NAME = "bitmaps"
+        const val PNG_EXTENSION = ".png"
     }
 }
