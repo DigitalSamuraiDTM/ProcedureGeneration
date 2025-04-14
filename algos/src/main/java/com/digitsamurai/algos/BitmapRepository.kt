@@ -21,13 +21,13 @@ class BitmapRepository @Inject constructor(
 
     sealed class Name {
         data object Auto : Name()
-        data class Value(val name: String) : Name()
+        data class Value(val id: String) : Name()
     }
 
-    fun set(bitmap: Bitmap, name: Name = Name.Auto): Boolean {
-        val fileName = when (name) {
+    fun set(bitmap: Bitmap, id: Name = Name.Auto): Boolean {
+        val fileName = when (id) {
             Name.Auto -> bitmap.generateName()
-            is Name.Value -> name.name
+            is Name.Value -> id.id
         } + PNG_EXTENSION
         val file = File(storage, fileName)
         return bitmap.compress(Bitmap.CompressFormat.PNG, 100, file.outputStream())
@@ -49,7 +49,7 @@ class BitmapRepository @Inject constructor(
         return bitmap.also { cache[id] = it }
     }
 
-    fun get(name: Name.Value): Bitmap = get(name.name)
+    fun get(name: Name.Value): Bitmap = get(name.id)
 
     /**
      * file path , bitmap id

@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,7 +32,21 @@ object NeighborScreen : BaseScreen<NeighborScreenState, NeighborScreenEvent, Nei
     }
 
     override suspend fun onEvent(event: NeighborScreenEvent, actions: NeighborScreenActions, snackbar: SnackbarHostState) {
+        when (event) {
+            NeighborScreenEvent.BitmapSaving.Failed -> snackbar.showSnackbar(
+                message = "Autosaving failed",
+                duration = SnackbarDuration.Long
+            )
 
+            is NeighborScreenEvent.BitmapSaving.Success -> {
+                val actionResult = snackbar.showSnackbar(
+                    message = "Autosaved!",
+                    actionLabel = "Cancel",
+                    duration = SnackbarDuration.Short
+                )
+                if (actionResult == SnackbarResult.ActionPerformed) actions.undoImageSaving(event.fileName)
+            }
+        }
     }
 
     @Composable
