@@ -9,10 +9,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
-import com.digitsamurai.utils.extensions.loadBitmapFromStorage
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object BitmapRenderer {
 
@@ -30,7 +35,6 @@ object BitmapRenderer {
         ) : State
 
         data class ContentBitmapPath(
-            val path: String,
             override val id: String,
         ) : State
 
@@ -43,8 +47,9 @@ object BitmapRenderer {
         modifier: Modifier = Modifier,
         state: State,
         onClick: (id: String) -> Unit,
+        onBitmapIdLoad: ((path: String) -> Deferred<Bitmap>)? = null,
     ) {
-        val context = LocalContext.current
+        val loaderCoroutineScope = rememberCoroutineScope()
         Box(modifier = modifier.clickable { onClick(state.id) }) {
             when (state) {
                 State.Empty -> {
@@ -53,7 +58,6 @@ object BitmapRenderer {
                         imageVector = Icons.Default.Search,
                         contentDescription = null
                     )
-
                 }
 
                 is State.ContentBitmap -> {
@@ -65,12 +69,26 @@ object BitmapRenderer {
                 }
 
                 is State.ContentBitmapPath -> {
-                    val bitmap = context.loadBitmapFromStorage(state.path)
-                    Image(
-                        modifier = Modifier.fillMaxSize(),
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = state.id
-                    )
+                    if (onBitmapIdLoad != null) {
+                        val (bitmap, setBitmap) = remember { mutableStateOf<Bitmap?>(null) }
+                        if (bitmap == null) {
+                            val bitmapDeferred = onBitmapIdLoad.invoke(state.id)
+                            LaunchedEffect(Unit) {
+                                loaderCoroutineScope.launch(Dispatchers.Default) {
+                                    setBitmap(bitmapDeferred.await())
+                                }
+                            }
+                        }
+                        if (bitmap != null) {
+                            Image(
+                                modifier = Modifier.fillMaxSize(),
+                                bitmap = bitmap.asImageBitmap(),
+                                contentDescription = state.id
+                            )
+                        }
+                    } else {
+                        throw IllegalArgumentException("Need implement onBitmapIdLoad function")
+                    }
                 }
             }
         }

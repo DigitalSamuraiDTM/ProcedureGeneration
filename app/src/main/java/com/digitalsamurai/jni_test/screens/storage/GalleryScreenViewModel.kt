@@ -1,11 +1,14 @@
 package com.digitalsamurai.jni_test.screens.storage
 
+import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.view.BitmapRenderer
 import com.digitsamurai.algos.BitmapRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,7 +31,6 @@ class GalleryScreenViewModel @Inject constructor(
             updateState { state ->
                 state.copy(bitmapItems = paths.map {
                     BitmapRenderer.State.ContentBitmapPath(
-                        path = it.first,
                         id = it.second
                     )
                 }
@@ -39,5 +41,11 @@ class GalleryScreenViewModel @Inject constructor(
 
     override fun onGalleryItemClicked(itemId: String?) {
 
+    }
+
+    override fun onGalleryItemLoad(itemId: String): Deferred<Bitmap> {
+        return viewModelScope.async {
+            bitmapRepository.get(itemId)
+        }
     }
 }
