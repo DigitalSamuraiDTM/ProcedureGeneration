@@ -6,11 +6,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
-import com.digitalsamurai.jni_test.screens.interpolation.linear.LinearScreen
-import com.digitalsamurai.jni_test.screens.main.MainScreen
-import com.digitalsamurai.jni_test.screens.interpolation.neighbor.NeighborScreen
-import com.digitalsamurai.jni_test.screens.settings.SettingsScreen
 import com.digitalsamurai.jni_test.screens.gallery.GalleryScreen
+import com.digitalsamurai.jni_test.screens.interpolation.bicubic.BicubicScreen
+import com.digitalsamurai.jni_test.screens.interpolation.linear.LinearScreen
+import com.digitalsamurai.jni_test.screens.interpolation.neighbor.NeighborScreen
+import com.digitalsamurai.jni_test.screens.main.MainScreen
+import com.digitalsamurai.jni_test.screens.settings.SettingsScreen
 
 
 @Composable
@@ -26,4 +27,11 @@ fun Navigation(modifier: Modifier, navController: NavHostController) {
 
 val startScreen: BaseScreen<*, *, *> = MainScreen
 
-val appsScreen = setOf<BaseScreen<*, *, *>>(SettingsScreen, MainScreen, LinearScreen, NeighborScreen, GalleryScreen)
+val appsScreen = setOf<BaseScreen<*, *, *>>(
+    SettingsScreen,
+    MainScreen,
+    LinearScreen,
+    NeighborScreen,
+    BicubicScreen,
+    GalleryScreen
+)

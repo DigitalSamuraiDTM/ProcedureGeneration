@@ -1,6 +1,7 @@
 package com.digitalsamurai.jni_test.screens.main
 
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
+import com.digitalsamurai.jni_test.screens.interpolation.bicubic.BicubicScreen
 import com.digitalsamurai.jni_test.screens.interpolation.linear.LinearScreen
 import com.digitalsamurai.jni_test.screens.interpolation.neighbor.NeighborScreen
 import com.digitalsamurai.jni_test.view.ImageSelector
@@ -16,13 +17,18 @@ class MainScreenViewModel @Inject constructor(
         imageSelectorState = ImageSelector.defaultState(),
         featuresItems = listOf(
             FeatureItem.State(
-                id = "linear_interpolation",
+                id = LinearScreen.screenRoute,
                 title = "Linear interpolation",
                 icon = null
             ),
             FeatureItem.State(
-                id = "neares_neighbor_interpolation",
+                id = NeighborScreen.screenRoute,
                 title = "Nearest neighbor interpolation",
+                icon = null
+            ),
+            FeatureItem.State(
+                id = BicubicScreen.screenRoute,
+                title = "Bicubic interpolation",
                 icon = null
             )
         )
@@ -35,13 +41,13 @@ class MainScreenViewModel @Inject constructor(
 
     override fun onFeatureItemClicked(itemId: String) {
         when (itemId) {
-            "linear_interpolation" -> {
-                navigateTo(LinearScreen)
-            }
+            LinearScreen.screenRoute -> navigateTo(LinearScreen)
 
-            "neares_neighbor_interpolation" -> {
-                navigateTo(NeighborScreen)
-            }
+
+            NeighborScreen.screenRoute -> navigateTo(NeighborScreen)
+
+
+            BicubicScreen.screenRoute -> navigateTo(BicubicScreen)
 
             else -> {
                 event(MainScreenEvent.UnknownFeature(itemId))

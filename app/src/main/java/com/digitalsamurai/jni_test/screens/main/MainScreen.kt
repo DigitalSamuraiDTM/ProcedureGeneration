@@ -47,11 +47,14 @@ object MainScreen : BaseScreen<MainScreenState, MainScreenEvent, MainScreenActio
                 modifier = Modifier.fillMaxSize(),
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(state.featuresItems) { feature ->
                     FeatureItem(
-                        modifier = Modifier.height(110.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .height(110.dp)
+                            .fillMaxWidth(),
                         state = feature,
                         onClick = { actions.onFeatureItemClicked(feature.id) }
                     )
