@@ -1,4 +1,4 @@
-package com.digitalsamurai.jni_test.screens.neighbor
+package com.digitalsamurai.jni_test.screens.interpolation.neighbor
 
 import com.digitalsamurai.jni_test.core.viewmodel.UiActions
 

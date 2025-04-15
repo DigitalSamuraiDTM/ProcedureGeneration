@@ -1,4 +1,4 @@
-package com.digitalsamurai.jni_test.screens.linear
+package com.digitalsamurai.jni_test.screens.interpolation.neighbor
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,23 +22,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.BitmapRenderer
 
-object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScreenActions>() {
+object NeighborScreen : BaseScreen<NeighborScreenState, NeighborScreenEvent, NeighborScreenActions>() {
 
-    override val routeName: String = "interpolation/linear"
+    override val routeName: String = "interpolation/neighbor"
 
     @Composable
-    override fun MakeViewModel(): LinearScreenScreenViewModel {
+    override fun MakeViewModel(): NeighborScreenViewModel {
         return hiltViewModel()
     }
 
-    override suspend fun onEvent(event: LinearScreenEvent, actions: LinearScreenActions, snackbar: SnackbarHostState) {
+    override suspend fun onEvent(event: NeighborScreenEvent, actions: NeighborScreenActions, snackbar: SnackbarHostState) {
         when (event) {
-            LinearScreenEvent.BitmapSaving.Failed -> snackbar.showSnackbar(
+            NeighborScreenEvent.BitmapSaving.Failed -> snackbar.showSnackbar(
                 message = "Autosaving failed",
                 duration = SnackbarDuration.Long
             )
 
-            is LinearScreenEvent.BitmapSaving.Success -> {
+            is NeighborScreenEvent.BitmapSaving.Success -> {
                 val actionResult = snackbar.showSnackbar(
                     message = "Autosaved!",
                     actionLabel = "Cancel",
@@ -50,10 +50,7 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScr
     }
 
     @Composable
-    override fun Screen(
-        state: LinearScreenState,
-        actions: LinearScreenActions,
-    ) {
+    override fun Screen(state: NeighborScreenState, actions: NeighborScreenActions) {
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
         ) {

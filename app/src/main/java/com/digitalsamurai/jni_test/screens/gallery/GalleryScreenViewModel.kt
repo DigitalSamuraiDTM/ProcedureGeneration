@@ -1,4 +1,4 @@
-package com.digitalsamurai.jni_test.screens.storage
+package com.digitalsamurai.jni_test.screens.gallery
 
 import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope

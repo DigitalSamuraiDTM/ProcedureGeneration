@@ -1,4 +1,4 @@
-package com.digitalsamurai.jni_test.screens.neighbor
+package com.digitalsamurai.jni_test.screens.interpolation.neighbor
 
 import android.graphics.Bitmap
 import android.util.Log

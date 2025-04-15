@@ -1,4 +1,4 @@
-package com.digitalsamurai.jni_test.screens.storage
+package com.digitalsamurai.jni_test.screens.gallery
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height

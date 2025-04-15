@@ -1,4 +1,4 @@
-package com.digitalsamurai.jni_test.screens.linear
+package com.digitalsamurai.jni_test.screens.interpolation.linear
 
 import android.content.Context
 import android.graphics.Bitmap

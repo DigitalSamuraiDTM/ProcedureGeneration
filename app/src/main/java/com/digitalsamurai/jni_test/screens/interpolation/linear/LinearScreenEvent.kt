@@ -1,4 +1,4 @@
-package com.digitalsamurai.jni_test.screens.linear
+package com.digitalsamurai.jni_test.screens.interpolation.linear
 
 import com.digitalsamurai.jni_test.core.viewmodel.UiEvent
 

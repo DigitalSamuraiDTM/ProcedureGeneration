@@ -22,7 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.digitalsamurai.jni_test.Navigation
 import com.digitalsamurai.jni_test.screens.main.MainScreen
 import com.digitalsamurai.jni_test.screens.settings.SettingsScreen
-import com.digitalsamurai.jni_test.screens.storage.GalleryScreen
+import com.digitalsamurai.jni_test.screens.gallery.GalleryScreen
 import com.digitalsamurai.jni_test.theme.AppTheme
 import com.digitalsamurai.jni_test.theme.ThemeController
 import com.digitalsamurai.jni_test.view.bottombar.BottomBar

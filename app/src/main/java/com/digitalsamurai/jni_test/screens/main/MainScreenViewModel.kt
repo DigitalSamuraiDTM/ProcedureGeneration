@@ -1,8 +1,8 @@
 package com.digitalsamurai.jni_test.screens.main
 
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
-import com.digitalsamurai.jni_test.screens.linear.LinearScreen
-import com.digitalsamurai.jni_test.screens.neighbor.NeighborScreen
+import com.digitalsamurai.jni_test.screens.interpolation.linear.LinearScreen
+import com.digitalsamurai.jni_test.screens.interpolation.neighbor.NeighborScreen
 import com.digitalsamurai.jni_test.view.ImageSelector
 import com.digitalsamurai.jni_test.view.items.FeatureItem
 import dagger.hilt.android.lifecycle.HiltViewModel
