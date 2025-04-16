@@ -5,6 +5,7 @@ import com.digitalsamurai.math.data.D3Point
 import com.digitalsamurai.math.interpolators.dimensionals.one.cubicInterpolation
 import com.digitalsamurai.math.interpolators.dimensionals.one.linearInterpolation
 import com.digitalsamurai.math.interpolators.dimensionals.one.nearestNeighborInterpolation
+import com.digitalsamurai.math.interpolators.dimensionals.two.bicubicInterpolation
 import com.digitalsamurai.math.interpolators.dimensionals.two.bilinearInterpolation
 
 object Interpolation {
@@ -65,5 +66,10 @@ object Interpolation {
             entryPoint = entryPoint,
             points = points
         )
+
+        fun bicubic(
+            entryPoint: D2Point,
+            pointsZValues: List<List<Float>>,
+        ) = bicubicInterpolation(entryPoint, pointsZValues)
     }
 }

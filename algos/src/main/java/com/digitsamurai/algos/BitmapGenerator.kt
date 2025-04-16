@@ -24,6 +24,55 @@ class BitmapGenerator @Inject constructor() {
     private fun newBitmapTemplate(size: Size): Bitmap = Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888)
 
     @WorkerThread
+    suspend fun bicubicBitmap(size: Size): Bitmap = with(Dispatchers.Default) {
+        val matrix = mutableListOf<List<Color>>()
+        repeat(4) {
+            val line = mutableListOf<Color>()
+            repeat(4) {
+                line.add(randomColor())
+            }
+            matrix.add(line)
+        }
+        val bitmap = newBitmapTemplate(size)
+
+        // надо вычитать !!!единицу!!! для того, чтобы интерполироваться от -1 до 2
+        val bicubicScaleIndexWidth = 3f / bitmap.width
+        val bicubicScaleIndexHeight = 3f / bitmap.height
+
+        val redColors = matrix.map { it.map { color -> color.red() } }
+        val greenColors = matrix.map { it.map { color -> color.green() } }
+        val blueColors = matrix.map { it.map { color -> color.blue() } }
+
+        repeat(bitmap.height) { y ->
+            repeat(bitmap.width) { x ->
+                val red = Interpolation.TwoDimensional.bicubic(
+                    entryPoint = D2Point(
+                        x = (x * 3f / bitmap.width) - 1,
+                        y = (y * 3f / bitmap.height) - 1,
+                    ),
+                    pointsZValues = redColors
+                )
+                val green = Interpolation.TwoDimensional.bicubic(
+                    entryPoint = D2Point(
+                        x = (x * 3f / bitmap.width) - 1,
+                        y = (y * 3f / bitmap.height) - 1,
+                    ),
+                    pointsZValues = greenColors
+                )
+                val blue = Interpolation.TwoDimensional.bicubic(
+                    entryPoint = D2Point(
+                        x = (x * 3f / bitmap.width) - 1,
+                        y = (y * 3f / bitmap.height) - 1,
+                    ),
+                    pointsZValues = blueColors
+                )
+                bitmap.setPixel(x, y, Color.rgb(red, green, blue))
+            }
+        }
+        return@with bitmap
+    }
+
+    @WorkerThread
     suspend fun bilinearBitmap(size: Size, bilinearConfig: BilinearConfig.Matrix): Bitmap = with(Dispatchers.Default) {
         val bitmap = newBitmapTemplate(size)
         val matrixColor = mutableListOf<List<Color>>()
@@ -53,11 +102,11 @@ class BitmapGenerator @Inject constructor() {
                 val rtColor = matrixColor[currentX + 1][currentY]
                 val lbColor = matrixColor[currentX][currentY + 1]
                 val color = bilinearWithColor(
-                    entryPoint = D2Point(x.toFloat(),y.toFloat()),
-                    colorLT = ColorPoint(color = ltColor, point = D2Point(currentX*ceilX,currentY*ceilY)),
-                    colorLB = ColorPoint(color = lbColor, point = D2Point(currentX*ceilX,(currentY+1)*ceilY)),
-                    colorRB = ColorPoint(color = rbColor, point = D2Point((currentX+1)*ceilX,(currentY+1)*ceilY)),
-                    colorRT = ColorPoint(color = rtColor, point = D2Point((currentX+1)*ceilX,currentY*ceilY)),
+                    entryPoint = D2Point(x.toFloat(), y.toFloat()),
+                    colorLT = ColorPoint(color = ltColor, point = D2Point(currentX * ceilX, currentY * ceilY)),
+                    colorLB = ColorPoint(color = lbColor, point = D2Point(currentX * ceilX, (currentY + 1) * ceilY)),
+                    colorRB = ColorPoint(color = rbColor, point = D2Point((currentX + 1) * ceilX, (currentY + 1) * ceilY)),
+                    colorRT = ColorPoint(color = rtColor, point = D2Point((currentX + 1) * ceilX, currentY * ceilY)),
                 )
                 bitmap[x, y] = color.toArgb()
             }
@@ -75,7 +124,7 @@ class BitmapGenerator @Inject constructor() {
         repeat(bitmap.height) { h ->
             repeat(bitmap.width) { w ->
                 val color = bilinearWithColor(
-                    entryPoint = D2Point(w.toFloat(),h.toFloat()),
+                    entryPoint = D2Point(w.toFloat(), h.toFloat()),
                     colorLB, colorRB, colorLT, colorRT
                 )
                 bitmap.set(x = w, y = h, color = color.toArgb())
