@@ -2,6 +2,7 @@ package com.digitsamurai.algos
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.core.graphics.set
 import com.digitalsamurai.math.data.D2Point
@@ -35,38 +36,40 @@ class BitmapGenerator @Inject constructor() {
         }
         val bitmap = newBitmapTemplate(size)
 
-        // надо вычитать !!!единицу!!! для того, чтобы интерполироваться от -1 до 2
-        val bicubicScaleIndexWidth = 3f / bitmap.width
-        val bicubicScaleIndexHeight = 3f / bitmap.height
-
         val redColors = matrix.map { it.map { color -> color.red() } }
         val greenColors = matrix.map { it.map { color -> color.green() } }
         val blueColors = matrix.map { it.map { color -> color.blue() } }
 
         repeat(bitmap.height) { y ->
             repeat(bitmap.width) { x ->
+                val xI = (x * 3f / bitmap.width) - 1
+                val yI = (y * 3f / bitmap.height) - 1
                 val red = Interpolation.TwoDimensional.bicubic(
                     entryPoint = D2Point(
-                        x = (x * 3f / bitmap.width) - 1,
-                        y = (y * 3f / bitmap.height) - 1,
+                        x = xI, y = yI,
                     ),
                     pointsZValues = redColors
                 )
                 val green = Interpolation.TwoDimensional.bicubic(
                     entryPoint = D2Point(
-                        x = (x * 3f / bitmap.width) - 1,
-                        y = (y * 3f / bitmap.height) - 1,
+                        x = xI, y = yI,
                     ),
                     pointsZValues = greenColors
                 )
                 val blue = Interpolation.TwoDimensional.bicubic(
                     entryPoint = D2Point(
-                        x = (x * 3f / bitmap.width) - 1,
-                        y = (y * 3f / bitmap.height) - 1,
+                        x = xI, y = yI,
                     ),
                     pointsZValues = blueColors
                 )
-                bitmap.setPixel(x, y, Color.rgb(red, green, blue))
+                // интересно, что при интерполяции значения цветового канала могут уходить за возможные (условное red может быть отрицательным, а не 0-1)
+                // поэтому надо обрубать значения чтобы избежать "цветовых пузырей"
+                bitmap.setPixel(x, y, Color.rgb(
+                    red.coerceAtMost(1f).coerceAtLeast(0f),
+                    green.coerceAtMost(1f).coerceAtLeast(0f),
+                    blue.coerceAtMost(1f).coerceAtLeast(0f)
+                )
+                )
             }
         }
         return@with bitmap

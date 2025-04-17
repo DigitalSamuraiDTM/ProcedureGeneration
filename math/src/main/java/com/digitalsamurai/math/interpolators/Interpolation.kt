@@ -6,6 +6,7 @@ import com.digitalsamurai.math.interpolators.dimensionals.one.cubicInterpolation
 import com.digitalsamurai.math.interpolators.dimensionals.one.linearInterpolation
 import com.digitalsamurai.math.interpolators.dimensionals.one.nearestNeighborInterpolation
 import com.digitalsamurai.math.interpolators.dimensionals.two.bicubicInterpolation
+import com.digitalsamurai.math.interpolators.dimensionals.two.bicubicInterpolation2
 import com.digitalsamurai.math.interpolators.dimensionals.two.bilinearInterpolation
 
 object Interpolation {
