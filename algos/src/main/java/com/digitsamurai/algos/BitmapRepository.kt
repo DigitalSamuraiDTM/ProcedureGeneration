@@ -51,11 +51,14 @@ class BitmapRepository @Inject constructor(
 
     fun get(name: Name.Value): Bitmap = get(name.id)
 
+    fun getFile(id: String): File {
+        return File(storage, id)
+    }
+
     /**
      * file path , bitmap id
      */
     fun getMetaInfo(): List<Pair<String, String>> {
-        val storage = context.getDir(STORAGE_NAME, Context.MODE_PRIVATE)
         return storage.listFiles()?.map { file -> Pair(file.path, file.name) } ?: emptyList()
     }
 

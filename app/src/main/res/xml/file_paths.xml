@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <files-path path="app_bitmaps/" name="app_bitmaps" />
+    <files-path path="bitmaps/" name="bitmaps" />
+    <files-path path="." name="all" />
+</paths>

@@ -16,7 +16,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Jni_test"
         tools:targetApi="31">
-
+        <provider
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:authorities="com.digitalsamurai.jni_test.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <activity
             android:name=".main.MainActivity"
             android:exported="true">

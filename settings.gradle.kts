@@ -30,3 +30,6 @@ include(":app")
 include(":math")
 include(":algos")
 include(":utils")
+
+// core. YADRO WITH MY SICK DREAM
+include("core:otel:otel-api")
