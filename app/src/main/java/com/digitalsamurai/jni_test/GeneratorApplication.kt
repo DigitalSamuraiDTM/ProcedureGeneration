@@ -1,22 +1,23 @@
 package com.digitalsamurai.jni_test
 
 import android.app.ActivityManager
-import android.app.Application
 import android.content.Context
-import android.os.Build
-import android.util.Log
+import com.digitalsamurai.core.otel.OtelApplication
 import dagger.hilt.android.HiltAndroidApp
 import java.util.UUID
 
 @HiltAndroidApp
-class GeneratorApplication: Application() {
+class GeneratorApplication: OtelApplication() {
+
+    /**
+     * launch otel only in main process
+     */
+    override fun isProcessForOtel() = isMainProcess()
 
     override fun onCreate() {
-        if (isMainProcess()) {
-            val sessionId = generateSessionId()
-            Log.d("OBAMA", "SessionId: $sessionId")
-        }
-        super.onCreate()
+        val sessionId = generateSessionId()
+        // call custom super method with session id providing
+        super.onCreate(sessionId)
     }
 
     /**

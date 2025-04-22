@@ -60,6 +60,9 @@ kapt {
 dependencies {
 
     implementation(project(":math"))
+    implementation(project(":algos"))
+    implementation(project(":utils"))
+    implementation(project(":core:otel"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -77,8 +80,7 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    implementation(project(":algos"))
-    implementation(project(":utils"))
+
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.material3)

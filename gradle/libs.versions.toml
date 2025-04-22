@@ -20,8 +20,14 @@ navigationFragmentCompose = "2.8.7"
 uiTooling = "1.7.8"
 runtimeAndroid = "1.7.8"
 uiUnitAndroid = "1.7.8"
+otelAndroidAgent = "0.11.0-alpha"
+otel = "1.49.0"
+otel-alpha = "1.49.0-alpha"
 
 [libraries]
+otel-android-agent = { module = "io.opentelemetry.android:android-agent", version.ref = "otelAndroidAgent" }
+otel-exporter-otlp =  { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "otel" }
+otel-api-incubator = { module = "io.opentelemetry:opentelemetry-api-incubator", version.ref = "otel-alpha" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

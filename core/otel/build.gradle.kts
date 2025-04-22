@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.org.jetbrains.kotlin.android)
-    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -31,6 +30,8 @@ android {
 }
 
 dependencies {
-
+    api(libs.otel.api.incubator)
+    api(libs.otel.exporter.otlp)
+    api(libs.otel.android.agent)
     implementation(libs.androidx.core.ktx)
 }
