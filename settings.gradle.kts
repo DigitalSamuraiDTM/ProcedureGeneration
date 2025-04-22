@@ -30,3 +30,5 @@ include(":app")
 include(":math")
 include(":algos")
 include(":utils")
+include(":core:otel")
+
