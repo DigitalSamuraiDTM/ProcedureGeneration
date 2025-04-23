@@ -14,7 +14,7 @@ val otelHostType: String = gradleLocalProperties(rootDir, providers).getProperty
 val otelHost = when(otelHostType) {
     "emulator" -> "http://10.0.2.2:4318"
     "global" -> "http://0.0.0.0:4318"
-    "local" -> "http://localhost:4318"
+    "local" -> "http://192.168.1.141:4318" // TODO: вот тут надо как-то запровайдить не просто локальный хост, а айпишник хоста в локальной сети (на серваке биндится 0.0.0.0)
     else -> throw GradleException("Current: <${otelHostType}>. Please, provide otel_host_type in local.properties with one value of: local, emulator, global")
 }
 android {

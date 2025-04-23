@@ -18,7 +18,7 @@ internal class Otel(
 ) {
 
     private val diskBufferingConfig = DiskBufferingConfig(
-        enabled = true,
+        enabled = false,
         maxCacheSize = 10_000_000,
         debugEnabled = BuildConfig.DEBUG
     )
