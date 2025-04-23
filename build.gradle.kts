@@ -6,3 +6,5 @@ plugins {
     alias(libs.plugins.compose.compiler) apply false
     id("com.google.dagger.hilt.android") version "2.51.1" apply false
 }
+
+val projectVersion by extra("1.0.0")

@@ -2,10 +2,8 @@ package com.digitalsamurai.core.otel
 
 import android.app.Application
 import android.util.Log
-import io.opentelemetry.android.BuildConfig
+import com.digitsamurai.core.otel.BuildConfig
 import io.opentelemetry.android.OpenTelemetryRum
-import io.opentelemetry.android.agent.setActivityTracerCustomizer
-import io.opentelemetry.android.agent.setFragmentTracerCustomizer
 import io.opentelemetry.android.config.OtelRumConfig
 import io.opentelemetry.android.features.diskbuffering.DiskBufferingConfig
 import io.opentelemetry.api.common.AttributeKey.stringKey
@@ -22,13 +20,13 @@ internal class Otel(
     private val diskBufferingConfig = DiskBufferingConfig(
         enabled = true,
         maxCacheSize = 10_000_000,
-        debugEnabled = true
+        debugEnabled = BuildConfig.DEBUG
     )
     private val otelConfig = OtelRumConfig()
         .setGlobalAttributes {
             // глобальные аттрибуты устанавливаются во все спаны
             Attributes.of(stringKey(GLOBAL_KEY_SESSION_ID), sessionId)
-            Attributes.of(stringKey(GLOBAL_KEY_APP_VERSION), "1.0.0")
+            Attributes.of(stringKey(GLOBAL_KEY_APP_VERSION), BuildConfig.PROJECT_VERSION)
         }.setDiskBufferingConfig(diskBufferingConfig)
 
 
@@ -41,26 +39,29 @@ internal class Otel(
         //TODO: поднять нормальный хост
         val otelBuilder = OpenTelemetryRum.builder(application, otelConfig)
             .addSpanExporterCustomizer {
-                OtlpHttpSpanExporter.builder().setEndpoint("http://10.0.2.2:4318/v1/traces").build()
+                OtlpHttpSpanExporter.builder().setEndpoint(SPAN_RECORD_ENDPOINT).build()
             }
             .addLogRecordExporterCustomizer {
                 OtlpHttpLogRecordExporter.builder()
-                    .setEndpoint("http://10.0.2.2:4318/v1/logs")
+                    .setEndpoint(LOG_RECORD_ENDPOINT)
                     .build()
             }
         // интересно то, что если указать неправильный endpoint для спанов или логов, то otelBuilder.build() создаст объект, только после этого крашнется
-       return try {
-           otel = otelBuilder.build()
-           Log.d("OBAMA", "SESSION STARTED: ${otel!!.rumSessionId}")
-           true
+        return try {
+            otel = otelBuilder.build()
+            Log.d("OBAMA", "SESSION STARTED: ${otel!!.rumSessionId}")
+            true
         } catch (e: Throwable) {
             Log.d("OBAMA", "OTEL BUILD FALED: ${e}")
-           false
+            false
         }
     }
 
     private companion object {
         const val GLOBAL_KEY_SESSION_ID = "session_id"
         const val GLOBAL_KEY_APP_VERSION = "app_version"
+
+        const val LOG_RECORD_ENDPOINT = BuildConfig.OTEL_HOST+"/v1/logs"
+        const val SPAN_RECORD_ENDPOINT = BuildConfig.OTEL_HOST+"/v1/traces"
     }
 }

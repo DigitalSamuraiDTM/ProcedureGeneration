@@ -2,9 +2,9 @@ plugins {
     `java-library`
     kotlin("jvm")
 }
-
+val projectVersion: String by rootProject.extra
 group = "com.digitalsamurai.math"
-version = "1.0.0"
+version = projectVersion
 
 java {
 

@@ -6,16 +6,23 @@ plugins {
     id("com.google.dagger.hilt.android")
 }
 
+val projectVersion: String by rootProject.extra
+
+
 android {
     namespace = "com.digitalsamurai.jni_test"
     compileSdk = 35
     ndkVersion = "27.0.12077973"
+
+    with(buildFeatures) {
+        this.buildConfig = true
+    }
     defaultConfig {
         applicationId = "com.digitalsamurai.jni_test"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = projectVersion
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -23,6 +30,8 @@ android {
                 cppFlags += "-std=c++17"
             }
         }
+
+        buildConfigField("String", "PROJECT_VERSION", "\"$projectVersion\"")
     }
 
     buildTypes {

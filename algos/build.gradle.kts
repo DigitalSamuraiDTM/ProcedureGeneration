@@ -4,12 +4,15 @@ plugins {
 }
 
 android {
+    val projectVersion: String by rootProject.extra
+
+
     namespace = "com.digitsamurai.algos"
     compileSdk = 34
 
     defaultConfig {
         minSdk = 26
-
+        version = projectVersion
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -17,7 +20,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
