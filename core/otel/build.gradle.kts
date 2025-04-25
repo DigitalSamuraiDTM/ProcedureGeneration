@@ -11,7 +11,7 @@ val projectVersion: String by rootProject.extra
 // local -- for implement testing in docker container using localhost
 // global -- for global production telemetry
 val otelHostType: String = gradleLocalProperties(rootDir, providers).getProperty("otel_host_type")
-val otelHost = when(otelHostType) {
+val otelHost = when (otelHostType) {
     "emulator" -> "http://10.0.2.2:4318"
     "global" -> "http://0.0.0.0:4318"
     "local" -> "http://192.168.1.141:4318" // TODO: вот тут надо как-то запровайдить не просто локальный хост, а айпишник хоста в локальной сети (на серваке биндится 0.0.0.0)
@@ -54,6 +54,7 @@ android {
 }
 
 dependencies {
+//    implementation("io.opentelemetry.android:instrumentation-sessions:0.10.0-alpha")
     api(libs.otel.api.incubator)
     api(libs.otel.exporter.otlp)
     api(libs.otel.android.agent)

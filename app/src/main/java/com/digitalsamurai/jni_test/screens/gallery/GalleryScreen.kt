@@ -18,13 +18,19 @@ import com.digitsamurai.utils.extensions.pixToDp
 object GalleryScreen : BaseScreen<GalleryScreenState, GalleryScreenEvent, GalleryScreenActions>() {
 
     override val routeName: String = "gallery"
+    override val screenName: String = "GalleryScreen"
+
 
     @Composable
     override fun MakeViewModel(): GalleryScreenViewModel {
         return hiltViewModel()
     }
 
-    override suspend fun onEvent(event: GalleryScreenEvent, actions: GalleryScreenActions, snackbar: SnackbarHostState) {
+    override suspend fun onEvent(
+        event: GalleryScreenEvent,
+        actions: GalleryScreenActions,
+        snackbar: SnackbarHostState
+    ) {
         TODO("Not yet implemented")
     }
 

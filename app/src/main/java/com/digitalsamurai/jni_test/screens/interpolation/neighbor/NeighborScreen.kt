@@ -22,16 +22,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.BitmapRenderer
 
-object NeighborScreen : BaseScreen<NeighborScreenState, NeighborScreenEvent, NeighborScreenActions>() {
+object NeighborScreen :
+    BaseScreen<NeighborScreenState, NeighborScreenEvent, NeighborScreenActions>() {
 
     override val routeName: String = "interpolation/neighbor"
+    override val screenName: String = "NeighborScreen"
+
 
     @Composable
     override fun MakeViewModel(): NeighborScreenViewModel {
         return hiltViewModel()
     }
 
-    override suspend fun onEvent(event: NeighborScreenEvent, actions: NeighborScreenActions, snackbar: SnackbarHostState) {
+    override suspend fun onEvent(
+        event: NeighborScreenEvent,
+        actions: NeighborScreenActions,
+        snackbar: SnackbarHostState
+    ) {
         when (event) {
             NeighborScreenEvent.BitmapSaving.Failed -> snackbar.showSnackbar(
                 message = "Autosaving failed",

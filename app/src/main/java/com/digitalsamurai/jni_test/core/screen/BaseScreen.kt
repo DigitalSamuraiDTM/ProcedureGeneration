@@ -5,11 +5,14 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import com.digitalsamurai.core.otel.extensions.startSpan
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.core.viewmodel.UiActions
 import com.digitalsamurai.jni_test.core.viewmodel.UiEvent
@@ -21,7 +24,9 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
     /**
      * WITHOUT SLASH///// !
      */
+    protected abstract val screenName: String
     protected abstract val routeName: String
+
     val screenRoute get() = ROOT + routeName
 
     /**
@@ -35,8 +40,10 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
 
         val state = viewModel.state.collectAsState().value
         val events = viewModel.events
+        val context = LocalContext.current
 
         val snackbarHostState = remember { SnackbarHostState() }
+        val screenSpan = remember { context.startSpan(screenName) }
 
         //TODO: интересно, что показ снекбара работает под мьютексом и может быть показан всегда один снекбар
         // если показать снекбар без таймаута с дисмисом по экшену, то это приведет к тому, что мы заблокируем чтение событий пока пользователь не примет действие
@@ -50,6 +57,11 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
                 onEvent(event, viewModel.getActions(), snackbarHostState)
             }
         }
+        DisposableEffect(Unit) {
+            onDispose {
+                screenSpan.end()
+            }
+        }
 
         Surface(modifier = Modifier.fillMaxSize()) {
             SnackbarHost(snackbarHostState, modifier = Modifier.fillMaxSize())
@@ -57,7 +69,11 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
         }
     }
 
-    protected abstract suspend fun onEvent(event: EVENTS, actions: ACTIONS, snackbar: SnackbarHostState)
+    protected abstract suspend fun onEvent(
+        event: EVENTS,
+        actions: ACTIONS,
+        snackbar: SnackbarHostState
+    )
 
     @Composable
     protected abstract fun MakeViewModel(): ScreenViewModel<STATE, EVENTS, ACTIONS>

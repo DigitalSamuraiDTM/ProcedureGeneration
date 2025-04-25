@@ -25,13 +25,19 @@ import com.digitalsamurai.jni_test.view.BitmapRenderer
 object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScreenActions>() {
 
     override val routeName: String = "interpolation/linear"
+    override val screenName: String = "LinearScreen"
+
 
     @Composable
     override fun MakeViewModel(): LinearScreenScreenViewModel {
         return hiltViewModel()
     }
 
-    override suspend fun onEvent(event: LinearScreenEvent, actions: LinearScreenActions, snackbar: SnackbarHostState) {
+    override suspend fun onEvent(
+        event: LinearScreenEvent,
+        actions: LinearScreenActions,
+        snackbar: SnackbarHostState
+    ) {
         when (event) {
             LinearScreenEvent.BitmapSaving.Failed -> snackbar.showSnackbar(
                 message = "Autosaving failed",

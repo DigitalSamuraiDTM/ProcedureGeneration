@@ -21,13 +21,18 @@ import com.digitalsamurai.jni_test.view.items.FeatureItem
 object MainScreen : BaseScreen<MainScreenState, MainScreenEvent, MainScreenActions>() {
 
     override val routeName: String = "main"
+    override val screenName: String = "MainScreen"
 
     @Composable
     override fun MakeViewModel(): MainScreenViewModel {
         return viewModel()
     }
 
-    override suspend fun onEvent(event: MainScreenEvent, actions: MainScreenActions, snackbar: SnackbarHostState) {
+    override suspend fun onEvent(
+        event: MainScreenEvent,
+        actions: MainScreenActions,
+        snackbar: SnackbarHostState
+    ) {
         when (event) {
             is MainScreenEvent.UnknownFeature -> snackbar.showSnackbar(
                 message = "Unknown feature!",

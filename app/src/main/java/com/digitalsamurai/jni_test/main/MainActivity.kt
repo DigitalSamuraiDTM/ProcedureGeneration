@@ -38,6 +38,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+//        lifecycleScope.launch {
+//            val span = buildSpan("span1")
+//            delay(3000)
+//            span.end()
+//            Log.d("OBAMA", "SENDED1")
+//            span.spanContext
+//            val span2 = buildSpan("span2", span)
+//            delay(2000)
+//            span2.end()
+//            Log.d("OBAMA", "SENDED2")
+//        }
         setContent {
             val navController = rememberNavController()
             val theme = themeController.currentMode.collectAsState()

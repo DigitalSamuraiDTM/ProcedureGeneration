@@ -23,8 +23,13 @@ import com.digitalsamurai.jni_test.view.BitmapRenderer
 object BicubicScreen : BaseScreen<BicubicScreenState, BicubicScreenEvent, BicubicScreenActions>() {
 
     override val routeName: String = "interpolation/bicubic"
+    override val screenName: String = "BicubicScreen"
 
-    override suspend fun onEvent(event: BicubicScreenEvent, actions: BicubicScreenActions, snackbar: SnackbarHostState) {
+    override suspend fun onEvent(
+        event: BicubicScreenEvent,
+        actions: BicubicScreenActions,
+        snackbar: SnackbarHostState
+    ) {
         TODO("Not yet implemented")
     }
 

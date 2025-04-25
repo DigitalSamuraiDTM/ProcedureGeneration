@@ -13,16 +13,23 @@ import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.ModConverter
 
 
-object SettingsScreen : BaseScreen<SettingsScreenState, SettingsScreenEvent, SettingsScreenActions>() {
+object SettingsScreen :
+    BaseScreen<SettingsScreenState, SettingsScreenEvent, SettingsScreenActions>() {
 
     override val routeName: String = "settings"
+    override val screenName: String = "SettingsScreen"
+
 
     @Composable
     override fun MakeViewModel(): SettingsScreenViewModel {
         return hiltViewModel()
     }
 
-    override suspend fun onEvent(event: SettingsScreenEvent, actions: SettingsScreenActions, snackbar: SnackbarHostState) {
+    override suspend fun onEvent(
+        event: SettingsScreenEvent,
+        actions: SettingsScreenActions,
+        snackbar: SnackbarHostState
+    ) {
 
     }
 
