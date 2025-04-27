@@ -6,26 +6,22 @@ import com.digitsamurai.core.otel.BuildConfig
 import io.opentelemetry.android.OpenTelemetryRum
 import io.opentelemetry.android.config.OtelRumConfig
 import io.opentelemetry.android.features.diskbuffering.DiskBufferingConfig
-import io.opentelemetry.android.instrumentation.startup.StartupInstrumentation
+import io.opentelemetry.android.instrumentation.activity.ActivityLifecycleInstrumentation
 import io.opentelemetry.api.common.AttributeKey.stringKey
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.context.Context
-import io.opentelemetry.context.Scope
 import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
 
 //TODO трекает неидеально, есть задержки. Надо разобраться откуда они берутся (compose криво лайфсайкл предоставляет или трейсинг не успевает)
-//TODO рутовый спан никогда не закрывается, поэтому я его вообще будто не вижу в трейсинге
 abstract class OtelApplication : Application() {
 
     /**
      * Core element
      */
     private var otel: OpenTelemetryRum? = null
-    private var rootScope: Scope? = null
-    private var rootSpan: Span? = null
 
 
     override fun onCreate() {
@@ -37,12 +33,8 @@ abstract class OtelApplication : Application() {
         super.onCreate()
     }
 
-    /**
-     * Создаем рутовый спан, очищая [Context] перед этим ПОЛНОСТЬЮ (все с чистого листа)
-     */
-    fun startRootSpan(name: String): Span {
-        Context.root().makeCurrent()
-        return mainTracer().spanBuilder(name).startSpan()
+    fun startScreenSpan(screenName: String): Span {
+        return mainTracer().spanBuilder(screenName).setParent(Context.current()).startSpan()
     }
 
     /**
@@ -90,16 +82,18 @@ abstract class OtelApplication : Application() {
                     .setEndpoint(LOG_RECORD_ENDPOINT)
                     .build()
             }
-            .addInstrumentation(StartupInstrumentation())
+            .addInstrumentation(ActivityLifecycleInstrumentation())
 
         // интересно то, что если указать неправильный endpoint для спанов или логов, то otelBuilder.build() создаст объект, только после этого крашнется
         return try {
             otel = otelBuilder.build()
             Log.d("OBAMA", "SESSION STARTED: ${otel!!.rumSessionId}")
             // TODO: такой способ создания спанов не сказать, что хорошо работает, трекает кривовато
-            rootSpan = otel!!.openTelemetry.getTracer(MAIN_TRACER_NAME).spanBuilder("AppStarted")
-                .startSpan()
-            rootScope = rootSpan!!.makeCurrent()
+            val rootSpan =
+                otel!!.openTelemetry.getTracer(MAIN_TRACER_NAME).spanBuilder("AppStarted")
+                    .startSpan()
+            Context.current().with(rootSpan).makeCurrent()
+            rootSpan.end()
             true
         } catch (e: Throwable) {
             Log.d("OBAMA", "OTEL BUILD FALED: ${e}")
@@ -109,6 +103,11 @@ abstract class OtelApplication : Application() {
 
     internal fun mainTracer(): Tracer {
         return otel!!.openTelemetry.getTracer(MAIN_TRACER_NAME)
+    }
+
+    override fun onTrimMemory(level: Int) {
+        Log.d("OBAMA", "TRIMMED: ${level}")
+        super.onTrimMemory(level)
     }
 
     private companion object {

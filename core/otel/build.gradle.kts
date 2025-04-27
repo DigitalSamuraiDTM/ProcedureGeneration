@@ -57,6 +57,7 @@ dependencies {
 //    implementation("io.opentelemetry.android:instrumentation-sessions:0.10.0-alpha")
     api(libs.otel.api.incubator)
     api(libs.otel.exporter.otlp)
+    api(libs.otel.api)
     api(libs.otel.android.agent)
     implementation(libs.androidx.core.ktx)
 }

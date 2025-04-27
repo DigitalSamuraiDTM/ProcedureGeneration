@@ -5,11 +5,8 @@ import com.digitalsamurai.core.otel.OtelApplication
 import io.opentelemetry.api.trace.Span
 
 
-/**
- * TODO()
- */
-fun Context.startRootSpan(name: String): Span {
-    return (this.applicationContext as OtelApplication).startRootSpan(name)
+fun Context.startScreenSpan(screenName: String): Span {
+    return (this.applicationContext as OtelApplication).startScreenSpan(screenName)
 }
 
 /**

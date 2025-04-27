@@ -1,6 +1,7 @@
 package com.digitalsamurai.jni_test.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -27,6 +28,7 @@ import com.digitalsamurai.jni_test.theme.AppTheme
 import com.digitalsamurai.jni_test.theme.ThemeController
 import com.digitalsamurai.jni_test.view.bottombar.BottomBar
 import dagger.hilt.android.AndroidEntryPoint
+import io.opentelemetry.api.trace.Span
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -35,20 +37,11 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var themeController: ThemeController
 
+    private var activitySpan: Span? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-//        lifecycleScope.launch {
-//            val span = buildSpan("span1")
-//            delay(3000)
-//            span.end()
-//            Log.d("OBAMA", "SENDED1")
-//            span.spanContext
-//            val span2 = buildSpan("span2", span)
-//            delay(2000)
-//            span2.end()
-//            Log.d("OBAMA", "SENDED2")
-//        }
         setContent {
             val navController = rememberNavController()
             val theme = themeController.currentMode.collectAsState()
@@ -103,6 +96,21 @@ class MainActivity : AppCompatActivity() {
 //    external fun stringFromJNI(): String
 //
 //    external fun obama(input: String): String
+
+    override fun onStop() {
+        Log.d("OBAMA", "ON STOP")
+        super.onStop()
+    }
+
+    override fun onStart() {
+        Log.d("OBAMA", "ON START")
+        super.onStart()
+    }
+
+    override fun onDestroy() {
+        Log.d("OBAMA", "ON DESTROY")
+        super.onDestroy()
+    }
 
     companion object {
         // Used to load the 'jni_test' library on application startup.

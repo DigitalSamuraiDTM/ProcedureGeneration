@@ -12,11 +12,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.digitalsamurai.core.otel.extensions.startSpan
+import com.digitalsamurai.core.otel.extensions.startScreenSpan
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.core.viewmodel.UiActions
 import com.digitalsamurai.jni_test.core.viewmodel.UiEvent
 import com.digitalsamurai.jni_test.core.viewmodel.UiState
+import io.opentelemetry.api.trace.Span
 
 
 abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions> {
@@ -28,6 +29,7 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
     protected abstract val routeName: String
 
     val screenRoute get() = ROOT + routeName
+    private var screenSpan: Span? = null
 
     /**
      * Entry point for screen from navigation
@@ -43,7 +45,7 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
         val context = LocalContext.current
 
         val snackbarHostState = remember { SnackbarHostState() }
-        val screenSpan = remember { context.startSpan(screenName) }
+        val screenSpan = remember { context.startScreenSpan(screenName) }
 
         //TODO: интересно, что показ снекбара работает под мьютексом и может быть показан всегда один снекбар
         // если показать снекбар без таймаута с дисмисом по экшену, то это приведет к тому, что мы заблокируем чтение событий пока пользователь не примет действие
