@@ -68,10 +68,10 @@ kapt {
 
 dependencies {
 
-    implementation(project(":math"))
-    implementation(project(":algos"))
-    implementation(project(":utils"))
-    implementation(project(":core:otel"))
+    implementation(project(":android:math"))
+    implementation(project(":android:algos"))
+    implementation(project(":android:utils"))
+    implementation(project(":android:core:otel"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

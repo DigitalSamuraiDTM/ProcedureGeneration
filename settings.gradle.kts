@@ -26,9 +26,9 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "jni_test"
-include(":app")
-include(":math")
-include(":algos")
-include(":utils")
-include(":core:otel")
+include(":android:app")
+include(":android:math")
+include(":android:algos")
+include(":android:utils")
+include(":android:core:otel")
 
