@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.digitalsamurai.core.otel.Otel
+import com.digitalsamurai.core.otel.extensions.addEvent
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.view.BitmapRenderer
 import com.digitsamurai.algos.BitmapGenerator
@@ -19,8 +20,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import io.opentelemetry.api.trace.Span
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = LinearScreenScreenViewModel.Factory::class)
 class LinearScreenScreenViewModel @AssistedInject constructor(
@@ -47,7 +46,7 @@ class LinearScreenScreenViewModel @AssistedInject constructor(
     override fun initialState(): LinearScreenState {
         return LinearScreenState(
             bitmapRendererState =
-            BitmapRenderer.default()
+                BitmapRenderer.default()
         )
     }
 
@@ -56,7 +55,7 @@ class LinearScreenScreenViewModel @AssistedInject constructor(
     }
 
     override fun undoImageSaving(id: String) {
-        viewModelScope.launch {
+        viewModelScope.launchTraced("UndoImageSaving") {
             val isDeleted = bitmapRepository.delete(id)
             Log.d("OBAMA", "Image delete ${isDeleted}: ${id}")
         }
@@ -64,7 +63,7 @@ class LinearScreenScreenViewModel @AssistedInject constructor(
 
     override fun onGenerateButtonClicked() {
         generatorJob?.cancel()
-        generatorJob = viewModelScope.launch {
+        generatorJob = viewModelScope.launchTraced("GenerateLinearBitmap", Dispatchers.Default) {
             val bitmap = bitmapGenerator.bilinearBitmap(
                 size = BitmapGenerator.Size(1000, 1000),
                 bilinearConfig = BitmapGenerator.BilinearConfig.Matrix(3)
@@ -78,16 +77,18 @@ class LinearScreenScreenViewModel @AssistedInject constructor(
                     )
                 )
             }
-            if (isAutosaveEnabled) autosaveBitmap(bitmap, bitmapName)
+            if (isAutosaveEnabled) {
+                val isSaved = autosaveBitmap(bitmap, bitmapName)
+                addEvent("AutoSaveBitmap", mapOf("is_saved" to isSaved.toString()))
+            }
         }
     }
 
-    private fun autosaveBitmap(bitmap: Bitmap, name: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val isSaved = bitmapRepository.set(bitmap, BitmapRepository.Name.Value(name))
-            val event = if (isSaved) LinearScreenEvent.BitmapSaving.Success(name) else LinearScreenEvent.BitmapSaving.Failed
-            event(event)
-        }
+    private fun autosaveBitmap(bitmap: Bitmap, name: String): Boolean {
+        val isSaved = bitmapRepository.set(bitmap, BitmapRepository.Name.Value(name))
+        val event = if (isSaved) LinearScreenEvent.BitmapSaving.Success(name) else LinearScreenEvent.BitmapSaving.Failed
+        event(event)
+        return isSaved
     }
 
 }

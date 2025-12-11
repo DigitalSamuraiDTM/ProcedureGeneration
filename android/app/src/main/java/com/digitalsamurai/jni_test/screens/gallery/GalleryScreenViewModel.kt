@@ -15,8 +15,6 @@ import io.opentelemetry.api.trace.Span
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = GalleryScreenViewModel.Factory::class)
 class GalleryScreenViewModel @AssistedInject constructor(
@@ -43,7 +41,7 @@ class GalleryScreenViewModel @AssistedInject constructor(
     }
 
     private fun loadBitmaps() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launchTraced("LoadBitmaps", Dispatchers.IO) {
             val paths = bitmapRepository.getMetaInfo()
             updateState { state ->
                 state.copy(bitmapItems = paths.map {

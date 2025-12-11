@@ -3,7 +3,6 @@ package com.digitalsamurai.jni_test.view
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -26,6 +25,7 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.digitalsamurai.jni_test.core.modifier.tracedClickable
 import com.digitalsamurai.jni_test.theme.AppTheme
 import com.digitalsamurai.jni_test.theme.ThemeMod
 
@@ -51,9 +51,11 @@ object ImageSelector {
                     contentDescription = "Selected image"
                 )
             } else {
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .clickable(true, onClick = onImageSelectClicked)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .tracedClickable("ImageSelector", onClick = onImageSelectClicked)
+                ) {
                     Column(
                         modifier = Modifier
                             .wrapContentHeight()

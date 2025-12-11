@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.Button
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -21,6 +20,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
+import com.digitalsamurai.jni_test.core.views.MyButton
 import com.digitalsamurai.jni_test.view.BitmapRenderer
 import io.opentelemetry.api.trace.Span
 
@@ -32,7 +32,7 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScr
 
     @Composable
     override fun MakeViewModel(screenSpan: Span, navController: NavController): LinearScreenScreenViewModel {
-        return hiltViewModel<LinearScreenScreenViewModel, LinearScreenScreenViewModel.Factory>{ f->
+        return hiltViewModel<LinearScreenScreenViewModel, LinearScreenScreenViewModel.Factory> { f ->
             f.get(screenSpan, navController)
         }
     }
@@ -102,7 +102,7 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScr
             // generation status
             // image
             // settings
-            Button(
+            MyButton(
                 modifier = Modifier
                     .height(50.dp)
                     .constrainAs(generateButton) {

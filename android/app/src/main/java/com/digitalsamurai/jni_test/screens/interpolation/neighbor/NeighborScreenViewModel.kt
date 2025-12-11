@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.digitalsamurai.core.otel.Otel
+import com.digitalsamurai.core.otel.extensions.addEvent
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.view.BitmapRenderer
 import com.digitsamurai.algos.BitmapGenerator
@@ -15,8 +16,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.opentelemetry.api.trace.Span
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = NeighborScreenViewModel.Factory::class)
 class NeighborScreenViewModel @AssistedInject constructor(
@@ -44,7 +43,7 @@ class NeighborScreenViewModel @AssistedInject constructor(
     }
 
     override fun undoImageSaving(bitmapId: String) {
-        viewModelScope.launch {
+        viewModelScope.launchTraced("DeleteBitmap") {
             val isDeleted = bitmapRepository.delete(bitmapId)
             Log.d("OBAMA", "Image delete ${isDeleted}: ${bitmapId}")
         }
@@ -55,7 +54,7 @@ class NeighborScreenViewModel @AssistedInject constructor(
     }
 
     override fun onGenerateButtonClicked() {
-        viewModelScope.launch {
+        viewModelScope.launchTraced("GenerateNeighborBitmap") {
             val bitmap = bitmapGenerator.neighborBitmap(
                 size = BitmapGenerator.Size(1000, 1000),
                 neighborConfig = BitmapGenerator.NeighborConfig.Random(20)
@@ -69,11 +68,14 @@ class NeighborScreenViewModel @AssistedInject constructor(
                     )
                 )
             }
-            if (isAutosaveEnabled) autosaveBitmap(bitmap, bitmapId)
+            if (isAutosaveEnabled) {
+                val isSaved = autosaveBitmap(bitmap, bitmapId)
+                addEvent("AutoSaveBitmap", mapOf("is_saved" to isSaved.toString()))
+            }
         }
     }
 
-    private fun autosaveBitmap(bitmap: Bitmap, id: String) {
+    private fun autosaveBitmap(bitmap: Bitmap, id: String): Boolean {
         val isSaved = bitmapRepository.set(bitmap, BitmapRepository.Name.Value(id))
         val event = if (isSaved) {
             NeighborScreenEvent.BitmapSaving.Success(id)
@@ -81,5 +83,6 @@ class NeighborScreenViewModel @AssistedInject constructor(
             NeighborScreenEvent.BitmapSaving.Failed
         }
         event(event)
+        return isSaved
     }
 }

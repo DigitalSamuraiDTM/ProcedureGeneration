@@ -1,19 +1,21 @@
 package com.digitalsamurai.jni_test.core.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.digitalsamurai.core.otel.Otel
-import com.digitalsamurai.jni_test.core.screen.BaseScreen
+import com.digitalsamurai.core.otel.extensions.endWithException
+import com.digitalsamurai.core.otel.extensions.endWithSuccess
+import com.digitalsamurai.core.otel.extensions.endWithUnknown
 import io.opentelemetry.api.trace.Span
-import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.context.Context
 import io.opentelemetry.extension.kotlin.asContextElement
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -25,20 +27,25 @@ abstract class ScreenViewModel<STATE : UiState, EVENT : UiEvent, ACTIONS : UiAct
     protected fun CoroutineScope.launchTraced(
         spanName: String,
         dispatcher: CoroutineDispatcher = Dispatchers.Main.immediate,
-        launch: suspend () -> Unit,
-    ) {
+        launch: suspend Span.() -> Unit,
+    ): Job {
         val scopeSpan = otel.tracer().spanBuilder(spanName)
             .setParent(Context.current().with(screenSpan))
             .startSpan()
         val scopedContext = Context.current().with(scopeSpan).asContextElement()
-        this.launch(scopedContext + dispatcher) {
+        return this.launch(scopedContext + dispatcher) {
             try {
-                launch()
+                scopeSpan.launch()
+                scopeSpan.endWithSuccess()
+            } catch (c: CancellationException) {
+                scopeSpan.setAttribute("was_cancelled", true)
+                scopeSpan.endWithException(null)
             } catch (e: Exception) {
-                scopeSpan.end()
+                scopeSpan.endWithException(e)
                 throw e
             } finally {
-                scopeSpan.end()
+                // если никто не закрыл спан с ошибкой, то он закроется с неизвестностью
+                scopeSpan.endWithUnknown()
             }
         }
     }
@@ -51,7 +58,7 @@ abstract class ScreenViewModel<STATE : UiState, EVENT : UiEvent, ACTIONS : UiAct
     open fun getActions(): ACTIONS = this as ACTIONS
 
     private val _state: MutableStateFlow<STATE> = MutableStateFlow(initialState())
-    val state = _state
+    val state: StateFlow<STATE> = _state
 
     private var _events = MutableSharedFlow<EVENT>(extraBufferCapacity = 1)
     val events = _events
