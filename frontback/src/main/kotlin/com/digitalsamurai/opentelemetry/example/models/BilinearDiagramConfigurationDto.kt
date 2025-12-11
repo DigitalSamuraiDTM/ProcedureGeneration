@@ -4,14 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DiagramConfigurationDto(
+data class BilinearDiagramConfigurationDto(
 
     @SerialName("width")
     val width: Int,
     @SerialName("height")
     val height: Int,
-    @SerialName("colors")
-    val colorsList: List<Long>,
-    @SerialName("count_points")
-    val countPoints: Int,
+    @SerialName("resolution")
+    val resolution: Int,
 )

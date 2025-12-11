@@ -1,11 +1,11 @@
 package com.digitalsamurai.opentelemetry.example.opentelemetry
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.application.hooks.*
-import io.ktor.server.request.*
-import io.ktor.server.routing.*
-import io.ktor.util.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.createApplicationPlugin
+import io.ktor.server.application.hooks.ResponseSent
+import io.ktor.server.request.path
+import io.ktor.server.routing.RoutingCall
+import io.ktor.util.AttributeKey
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.StatusCode
 
@@ -38,10 +38,28 @@ private fun HttpStatusCode?.toSpanStatus(): StatusCode {
     }
 }
 
-public fun Span.childSpan(name: String): Span {
+fun Span.childSpan(name: String): Span {
     return OtelHolder.childSpan(this, name)
 }
 
-public fun RoutingCall.requestSpan(): Span {
+fun RoutingCall.requestSpan(): Span {
     return this.attributes[AttributeKey<Span>("otel-span")]
+}
+
+suspend fun <T> Span.childTrace(spanName: String, make: suspend Span.() -> T): T {
+    val child = childSpan(spanName)
+    return try {
+        child.make().also {
+            child.setStatus(StatusCode.OK)
+            child.end()
+        }
+    } catch (e: Exception) {
+        child.setStatus(StatusCode.ERROR)
+        child.setAttribute("exception", e.localizedMessage)
+        child.end()
+        throw e
+    } finally {
+        child.setStatus(StatusCode.UNSET)
+        child.end()
+    }
 }
