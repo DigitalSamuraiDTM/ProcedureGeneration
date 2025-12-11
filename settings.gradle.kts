@@ -31,6 +31,7 @@ include(":android:math")
 include(":android:algos")
 include(":android:utils")
 include(":android:core:otel")
+include(":android:core:network")
 
 include(":frontback")
 

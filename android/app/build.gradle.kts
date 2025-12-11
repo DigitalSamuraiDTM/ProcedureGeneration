@@ -71,6 +71,7 @@ dependencies {
     implementation(project(":android:algos"))
     implementation(project(":android:utils"))
     implementation(project(":android:core:otel"))
+    implementation(project(":android:core:network"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
