@@ -32,3 +32,5 @@ include(":android:algos")
 include(":android:utils")
 include(":android:core:otel")
 
+include(":frontback")
+

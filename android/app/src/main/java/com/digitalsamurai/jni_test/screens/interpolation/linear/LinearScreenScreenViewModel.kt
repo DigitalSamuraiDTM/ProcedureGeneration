@@ -4,25 +4,42 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import com.digitalsamurai.core.otel.Otel
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.view.BitmapRenderer
 import com.digitsamurai.algos.BitmapGenerator
 import com.digitsamurai.algos.BitmapRepository
 import com.digitsamurai.utils.extensions.generateName
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.opentelemetry.api.trace.Span
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class LinearScreenScreenViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = LinearScreenScreenViewModel.Factory::class)
+class LinearScreenScreenViewModel @AssistedInject constructor(
     private val bitmapGenerator: BitmapGenerator,
     private val bitmapRepository: BitmapRepository,
     @ApplicationContext
     private val applicationContext: Context,
-) : ScreenViewModel<LinearScreenState, LinearScreenEvent, LinearScreenActions>(), LinearScreenActions {
+    private val otel: Otel,
+    @Assisted private val screenSpan: Span,
+    @Assisted private val navController: NavController,
+) : ScreenViewModel<LinearScreenState, LinearScreenEvent, LinearScreenActions>(
+    screenSpan = screenSpan,
+    otel = otel
+), LinearScreenActions {
+
+    @AssistedFactory
+    interface Factory {
+        fun get(screenSpan: Span, navController: NavController): LinearScreenScreenViewModel
+    }
 
     private var generatorJob: Job? = null
     private val isAutosaveEnabled = true

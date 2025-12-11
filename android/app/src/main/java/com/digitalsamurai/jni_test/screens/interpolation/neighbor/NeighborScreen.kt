@@ -19,8 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.BitmapRenderer
+import io.opentelemetry.api.trace.Span
 
 object NeighborScreen :
     BaseScreen<NeighborScreenState, NeighborScreenEvent, NeighborScreenActions>() {
@@ -28,10 +30,11 @@ object NeighborScreen :
     override val routeName: String = "interpolation/neighbor"
     override val screenName: String = "NeighborScreen"
 
-
     @Composable
-    override fun MakeViewModel(): NeighborScreenViewModel {
-        return hiltViewModel()
+    override fun MakeViewModel(screenSpan: Span, navController: NavController,): NeighborScreenViewModel {
+        return hiltViewModel<NeighborScreenViewModel, NeighborScreenViewModel.Factory>{ f->
+            f.get(screenSpan, navController)
+        }
     }
 
     override suspend fun onEvent(

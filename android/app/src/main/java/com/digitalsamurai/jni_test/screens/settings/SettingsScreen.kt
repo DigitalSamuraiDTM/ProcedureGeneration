@@ -9,8 +9,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.ModConverter
+import io.opentelemetry.api.trace.Span
 
 
 object SettingsScreen :
@@ -21,8 +23,10 @@ object SettingsScreen :
 
 
     @Composable
-    override fun MakeViewModel(): SettingsScreenViewModel {
-        return hiltViewModel()
+    override fun MakeViewModel(screenSpan: Span, navController: NavController): SettingsScreenViewModel {
+        return hiltViewModel<SettingsScreenViewModel, SettingsScreenViewModel.Factory> { f ->
+            f.get(navController, screenSpan)
+        }
     }
 
     override suspend fun onEvent(

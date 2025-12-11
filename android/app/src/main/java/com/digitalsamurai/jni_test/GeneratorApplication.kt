@@ -1,30 +1,27 @@
 package com.digitalsamurai.jni_test
 
 import android.app.ActivityManager
-import android.content.Context
-import com.digitalsamurai.core.otel.OtelApplication
+import android.app.Application
+import com.digitalsamurai.core.otel.Otel
 import dagger.hilt.android.HiltAndroidApp
-import java.util.UUID
 
 @HiltAndroidApp
-class GeneratorApplication : OtelApplication() {
+class GeneratorApplication : Application() {
+
+    lateinit var otel: Otel
 
     /**
      * launch otel only in main process
      */
-    override fun isProcessForOtel() = isMainProcess()
+    fun isProcessForOtel() = isMainProcess()
 
     override fun onCreate() {
+        if (isProcessForOtel()) {
+            otel = Otel()
+            val isInited = otel.initOtel(this)
+            if (!isInited) error("fatal init otel")
+        }
         super.onCreate()
-    }
-
-    /**
-     * Generate core session id for observability per app launching
-     * Not needed now
-     */
-    private fun generateSessionId(): String {
-        val uuid = UUID.randomUUID().toString()
-        return "$uuid-${System.currentTimeMillis()}"
     }
 
     private fun isMainProcess(): Boolean {

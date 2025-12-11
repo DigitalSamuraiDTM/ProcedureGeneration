@@ -8,6 +8,7 @@ import androidx.core.graphics.set
 import com.digitalsamurai.math.data.D2Point
 import com.digitalsamurai.math.data.D3Point
 import com.digitalsamurai.math.interpolators.Interpolation
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

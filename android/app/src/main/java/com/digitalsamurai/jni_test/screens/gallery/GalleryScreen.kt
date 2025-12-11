@@ -11,9 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.BitmapRenderer
 import com.digitsamurai.utils.extensions.pixToDp
+import io.opentelemetry.api.trace.Span
 
 object GalleryScreen : BaseScreen<GalleryScreenState, GalleryScreenEvent, GalleryScreenActions>() {
 
@@ -22,8 +24,10 @@ object GalleryScreen : BaseScreen<GalleryScreenState, GalleryScreenEvent, Galler
 
 
     @Composable
-    override fun MakeViewModel(): GalleryScreenViewModel {
-        return hiltViewModel()
+    override fun MakeViewModel(screenSpan: Span, navController: NavController): GalleryScreenViewModel {
+        return hiltViewModel<GalleryScreenViewModel, GalleryScreenViewModel.Factory> { f->
+            f.get(screenSpan, navController)
+        }
     }
 
     override suspend fun onEvent(

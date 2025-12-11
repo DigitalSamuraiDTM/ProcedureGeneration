@@ -8,7 +8,6 @@ plugins {
 
 val projectVersion: String by rootProject.extra
 
-
 android {
     namespace = "com.digitalsamurai.jni_test"
     compileSdk = 35

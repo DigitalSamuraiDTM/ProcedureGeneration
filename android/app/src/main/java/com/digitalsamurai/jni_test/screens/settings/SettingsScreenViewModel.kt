@@ -1,24 +1,41 @@
 package com.digitalsamurai.jni_test.screens.settings
 
+import androidx.navigation.NavController
+import com.digitalsamurai.core.otel.Otel
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.screens.main.MainScreen
 import com.digitalsamurai.jni_test.theme.ThemeController
 import com.digitalsamurai.jni_test.theme.ThemeMod
 import com.digitalsamurai.jni_test.view.ModConverter
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.opentelemetry.api.trace.Span
 import javax.inject.Inject
 
-@HiltViewModel
-class SettingsScreenViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = SettingsScreenViewModel.Factory::class)
+class SettingsScreenViewModel @AssistedInject constructor(
     private val themeController: ThemeController,
-) : ScreenViewModel<SettingsScreenState, SettingsScreenEvent, SettingsScreenActions>(), SettingsScreenActions {
+    private val otel: Otel,
+    @Assisted private val navController: NavController,
+    @Assisted private val screenSpan: Span,
+) : ScreenViewModel<SettingsScreenState, SettingsScreenEvent, SettingsScreenActions>(
+    otel = otel,
+    screenSpan = screenSpan
+), SettingsScreenActions {
+
+    @AssistedFactory
+    interface Factory {
+        fun get(navController: NavController, screenSpan: Span): SettingsScreenViewModel
+    }
 
     override fun initialState(): SettingsScreenState = SettingsScreenState(
         modConverter = ModConverter.defaultState()
     )
 
     fun toMainScreen() {
-        navigateTo(MainScreen)
+        navController.navigate(MainScreen.screenRoute)
     }
 
     override fun onConverterModSelected(mod: ModConverter.State.Mod) {

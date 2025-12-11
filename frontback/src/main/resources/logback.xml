@@ -1,0 +1,25 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                { "timestamp"="%d{YYYY-MM-dd HH:mm:ss.SSS}","logger":"%logger{36}", "level"="%-5level",
+                "request_id"="%X{request_id}", "msg"="%msg" } %n
+            </pattern>
+        </encoder>
+    </appender>
+    <root level="trace">
+        <appender-ref ref="STDOUT"/>
+    </root>
+    <!-- Логи роутинга сетевых запросов   -->
+    <logger name="io.ktor.server.routing.Routing" level="INFO"/>
+    <!-- Логи сериализации   -->
+    <logger name="io.ktor.server.plugins.contentnegotiation.ContentNegotiation" level="OFF"/>
+    <!-- Логи трансформации  -->
+    <logger name="io.ktor.server.engine.DefaultTransform" level="OFF"/>
+    <!-- Логи статус пейджей   -->
+    <logger name="io.ktor.server.plugins.statuspages.StatusPages" level="OFF"/>
+    <!-- Логи установки request id   -->
+    <logger name="io.ktor.server.plugins.callid.CallId" level="OFF"/>
+    <logger name="org.eclipse.jetty" level="INFO"/>
+    <logger name="io.netty" level="INFO"/>
+</configuration>

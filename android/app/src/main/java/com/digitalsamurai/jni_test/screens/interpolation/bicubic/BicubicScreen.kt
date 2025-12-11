@@ -17,8 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.BitmapRenderer
+import io.opentelemetry.api.trace.Span
 
 object BicubicScreen : BaseScreen<BicubicScreenState, BicubicScreenEvent, BicubicScreenActions>() {
 
@@ -34,8 +36,10 @@ object BicubicScreen : BaseScreen<BicubicScreenState, BicubicScreenEvent, Bicubi
     }
 
     @Composable
-    override fun MakeViewModel(): BicubicScreenViewModel {
-        return hiltViewModel()
+    override fun MakeViewModel(screenSpan: Span, navController: NavController): BicubicScreenViewModel {
+        return hiltViewModel<BicubicScreenViewModel, BicubicScreenViewModel.Factory> { f ->
+            f.get(screenSpan, navController)
+        }
     }
 
     @Composable

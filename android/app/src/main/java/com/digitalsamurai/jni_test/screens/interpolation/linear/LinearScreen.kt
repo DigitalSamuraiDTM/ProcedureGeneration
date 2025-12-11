@@ -19,8 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.BitmapRenderer
+import io.opentelemetry.api.trace.Span
 
 object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScreenActions>() {
 
@@ -29,8 +31,10 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScr
 
 
     @Composable
-    override fun MakeViewModel(): LinearScreenScreenViewModel {
-        return hiltViewModel()
+    override fun MakeViewModel(screenSpan: Span, navController: NavController): LinearScreenScreenViewModel {
+        return hiltViewModel<LinearScreenScreenViewModel, LinearScreenScreenViewModel.Factory>{ f->
+            f.get(screenSpan, navController)
+        }
     }
 
     override suspend fun onEvent(

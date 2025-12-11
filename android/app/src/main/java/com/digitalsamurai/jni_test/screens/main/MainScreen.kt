@@ -14,9 +14,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.view.items.FeatureItem
+import io.opentelemetry.api.trace.Span
 
 object MainScreen : BaseScreen<MainScreenState, MainScreenEvent, MainScreenActions>() {
 
@@ -24,8 +26,10 @@ object MainScreen : BaseScreen<MainScreenState, MainScreenEvent, MainScreenActio
     override val screenName: String = "MainScreen"
 
     @Composable
-    override fun MakeViewModel(): MainScreenViewModel {
-        return viewModel()
+    override fun MakeViewModel(screenSpan: Span, navController: NavController): MainScreenViewModel {
+        return hiltViewModel<MainScreenViewModel, MainScreenViewModel.Factory> { f->
+            f.get(screenSpan, navController)
+        }
     }
 
     override suspend fun onEvent(

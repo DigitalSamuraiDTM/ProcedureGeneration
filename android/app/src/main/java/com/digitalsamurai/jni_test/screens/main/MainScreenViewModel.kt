@@ -1,17 +1,33 @@
 package com.digitalsamurai.jni_test.screens.main
 
+import androidx.navigation.NavController
+import com.digitalsamurai.core.otel.Otel
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.screens.interpolation.bicubic.BicubicScreen
 import com.digitalsamurai.jni_test.screens.interpolation.linear.LinearScreen
 import com.digitalsamurai.jni_test.screens.interpolation.neighbor.NeighborScreen
 import com.digitalsamurai.jni_test.view.ImageSelector
 import com.digitalsamurai.jni_test.view.items.FeatureItem
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import io.opentelemetry.api.trace.Span
 
-@HiltViewModel
-class MainScreenViewModel @Inject constructor(
-) : ScreenViewModel<MainScreenState, MainScreenEvent, MainScreenActions>(), MainScreenActions {
+@HiltViewModel(assistedFactory = MainScreenViewModel.Factory::class)
+class MainScreenViewModel @AssistedInject constructor(
+    private val otel: Otel,
+    @Assisted private val screenSpan: Span,
+    @Assisted private val navController: NavController,
+) : ScreenViewModel<MainScreenState, MainScreenEvent, MainScreenActions>(
+    otel = otel,
+    screenSpan = screenSpan
+), MainScreenActions {
+
+    @AssistedFactory
+    interface Factory {
+        fun get(screenSpan: Span, navController: NavController): MainScreenViewModel
+    }
 
     override fun initialState(): MainScreenState = MainScreenState(
         imageSelectorState = ImageSelector.defaultState(),
@@ -41,13 +57,13 @@ class MainScreenViewModel @Inject constructor(
 
     override fun onFeatureItemClicked(itemId: String) {
         when (itemId) {
-            LinearScreen.screenRoute -> navigateTo(LinearScreen)
+            LinearScreen.screenRoute -> navController.navigate(LinearScreen.screenRoute)
 
 
-            NeighborScreen.screenRoute -> navigateTo(NeighborScreen)
+            NeighborScreen.screenRoute -> navController.navigate(NeighborScreen.screenRoute)
 
 
-            BicubicScreen.screenRoute -> navigateTo(BicubicScreen)
+            BicubicScreen.screenRoute -> navController.navigate(BicubicScreen.screenRoute)
 
             else -> {
                 event(MainScreenEvent.UnknownFeature(itemId))
