@@ -6,12 +6,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
-import com.digitalsamurai.jni_test.screens.gallery.GalleryScreen
-import com.digitalsamurai.jni_test.screens.interpolation.bicubic.BicubicScreen
-import com.digitalsamurai.jni_test.screens.interpolation.linear.LinearScreen
-import com.digitalsamurai.jni_test.screens.interpolation.neighbor.NeighborScreen
-import com.digitalsamurai.jni_test.screens.main.MainScreen
-import com.digitalsamurai.jni_test.screens.settings.SettingsScreen
+import com.digitalsamurai.jni_test.presentation.screens.gallery.GalleryScreen
+import com.digitalsamurai.jni_test.presentation.screens.interpolation.bicubic.BicubicScreen
+import com.digitalsamurai.jni_test.presentation.screens.interpolation.linear.LinearScreen
+import com.digitalsamurai.jni_test.presentation.screens.interpolation.neighbor.NeighborScreen
+import com.digitalsamurai.jni_test.presentation.screens.main.MainScreen
+import com.digitalsamurai.jni_test.presentation.screens.settings.SettingsScreen
 
 
 @Composable
