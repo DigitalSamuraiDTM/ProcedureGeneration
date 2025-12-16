@@ -1,6 +1,9 @@
 package com.digitalsamurai.opentelemetry.example.core.network
 
-import com.digitalsamurai.opentelemetry.example.core.network.polling.PollingOptions
+import com.digitalsamurai.core.otel.Otel
+import com.digitalsamurai.core.otel.extensions.endWithException
+import com.digitalsamurai.core.otel.extensions.endWithSuccess
+import com.digitalsamurai.core.otel.extensions.endWithUnknown
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
@@ -13,13 +16,14 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.util.appendAll
 import io.ktor.util.reflect.typeInfo
 import io.ktor.utils.io.CancellationException
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import io.opentelemetry.api.trace.Span
+import io.opentelemetry.context.Context
+import io.opentelemetry.extension.kotlin.asContextElement
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
@@ -27,7 +31,8 @@ import kotlinx.serialization.json.jsonObject
 // TODO вообще запросы надо делать умнее. Надо чтобы мы умели на каждый HTTP response code обрабатывать разные кейсы и, возможно, делать, разную десериализацию
 public class NetworkHttpClient(
     public val hostAddress: String,
-    public val portAddress: Int
+    public val portAddress: Int,
+    public val otel: Otel,
 ) {
 
     public val client: HttpClient = HttpClient(OkHttp) {
@@ -35,68 +40,74 @@ public class NetworkHttpClient(
             json()
         }
         install(HttpTimeout) {
-            requestTimeoutMillis = 30_000
-            connectTimeoutMillis = 10_000
-            socketTimeoutMillis = 30_000
+            requestTimeoutMillis = 10_000
+            connectTimeoutMillis = 50_000
+            socketTimeoutMillis = 10_000
         }
     }
 
-    public suspend inline fun <reified REQUEST_DATA : Any, reified RESPONSE_DATA : Any> makeNetworkRequestWithServerResult(
+    public suspend inline fun <reified REQUEST_DATA : Any, reified RESPONSE_DATA : Any> makeNetworkRequest(
         networkHttpRequest: NetworkHttpRequest<REQUEST_DATA, RESPONSE_DATA>,
         data: REQUEST_DATA,
-    ): Result<RESPONSE_DATA> = runCatchingExceptCancellation {
-        val httpResponse = client.request {
-            method = networkHttpRequest.method.toKtorMethod()
-            url {
-                host = hostAddress
-                port = portAddress
-                path(networkHttpRequest.path)
-            }
-            if (method == HttpMethod.Get) {
-                Json.encodeToJsonElement(data).jsonObject.entries.forEach { jsonEntry ->
-                    url.parameters.append(jsonEntry.key, jsonEntry.value.toString().trim('"'))
-                }
-            } else {
-                contentType(ContentType.Application.Json)
-                setBody(data, typeInfo<REQUEST_DATA>())
-            }
-        }
-        val responseBody = httpResponse.body<RESPONSE_DATA>()
-        responseBody
-    }
-
-    public inline fun <reified REQUEST_DATA : Any, reified RESPONSE_DATA : Any> pollNetworkRequestWithServerResult(
-        networkHttpRequest: NetworkHttpRequest<REQUEST_DATA, RESPONSE_DATA>,
-        data: REQUEST_DATA,
-        pollingOptions: PollingOptions,
-    ): Flow<Result<RESPONSE_DATA>> {
-        return flow {
-            var pollingRetry = 0
-            while (pollingOptions.isNeedContinue(pollingRetry)) {
-                val requestResult = makeNetworkRequestWithServerResult(networkHttpRequest, data)
-                if (requestResult.getOrNull() != null) {
-                    emit(requestResult)
-                } else {
-                    val exception = requestResult.exceptionOrNull() ?: IllegalStateException("Request was failed, but exception is null")
-                    when (pollingOptions.failedRequestPolicy) {
-                        PollingOptions.FailedRequestPolicy.RETURN_ERROR_AND_CONTINUE -> emit(Result.failure(exception))
-                        PollingOptions.FailedRequestPolicy.SKIP_ERROR_AND_CONTINUE -> {}
-                        PollingOptions.FailedRequestPolicy.RETURN_ERROR_AND_CANCEL -> {
-                            emit(Result.failure(exception))
-                            currentCoroutineContext().cancel()
+    ): Result<RESPONSE_DATA> = withContext(Dispatchers.IO + Context.current().asContextElement()) {
+        otel.tracer().spanBuilder(networkHttpRequest.path)
+            .startSpan()
+            .apply { makeCurrent() }
+            .runCatchingExceptCancellation {
+                val httpResponse = client.request {
+                    method = networkHttpRequest.method.toKtorMethod()
+                    headers.appendAll("traceparent" to "00-${spanContext.traceId}-${spanContext.spanId}-01",)
+                    url {
+                        host = hostAddress
+                        port = portAddress
+                        path(networkHttpRequest.path)
+                    }
+                    if (method == HttpMethod.Get) {
+                        Json.encodeToJsonElement(data).jsonObject.entries.forEach { jsonEntry ->
+                            url.parameters.append(jsonEntry.key, jsonEntry.value.toString().trim('"'))
                         }
-
-                        PollingOptions.FailedRequestPolicy.RETURN_ERROR_AND_FINISH -> {
-                            emit(Result.failure(exception))
-                            return@flow
-                        }
+                    } else {
+                        contentType(ContentType.Application.Json)
+                        setBody(data, typeInfo<REQUEST_DATA>())
                     }
                 }
-                pollingRetry++
-                delay(pollingOptions.delayBetweenRequests)
+                val responseBody = httpResponse.body<RESPONSE_DATA>()
+                responseBody
             }
-        }
     }
+
+//    public inline fun <reified REQUEST_DATA : Any, reified RESPONSE_DATA : Any> pollNetworkRequest(
+//        networkHttpRequest: NetworkHttpRequest<REQUEST_DATA, RESPONSE_DATA>,
+//        data: REQUEST_DATA,
+//        pollingOptions: PollingOptions,
+//    ): Flow<Result<RESPONSE_DATA>> {
+//        return flow {
+//            var pollingRetry = 0
+//            while (pollingOptions.isNeedContinue(pollingRetry)) {
+//                val requestResult = makeNetworkRequest(networkHttpRequest, data)
+//                if (requestResult.getOrNull() != null) {
+//                    emit(requestResult)
+//                } else {
+//                    val exception = requestResult.exceptionOrNull() ?: IllegalStateException("Request was failed, but exception is null")
+//                    when (pollingOptions.failedRequestPolicy) {
+//                        PollingOptions.FailedRequestPolicy.RETURN_ERROR_AND_CONTINUE -> emit(Result.failure(exception))
+//                        PollingOptions.FailedRequestPolicy.SKIP_ERROR_AND_CONTINUE -> {}
+//                        PollingOptions.FailedRequestPolicy.RETURN_ERROR_AND_CANCEL -> {
+//                            emit(Result.failure(exception))
+//                            currentCoroutineContext().cancel()
+//                        }
+//
+//                        PollingOptions.FailedRequestPolicy.RETURN_ERROR_AND_FINISH -> {
+//                            emit(Result.failure(exception))
+//                            return@flow
+//                        }
+//                    }
+//                }
+//                pollingRetry++
+//                delay(pollingOptions.delayBetweenRequests)
+//            }
+//        }
+//    }
 
     public fun NetworkHttpRequest.Method.toKtorMethod(): HttpMethod {
         return when (this) {
@@ -111,12 +122,16 @@ public class NetworkHttpClient(
      * Выполняем блок кода, пропуская отмену корутины, если происходила на участке.
      * Позволяет не учитывать пользовательскую отмену корутины во время поиска (с дебаунсом) или отмены действия
      */
-    public inline fun <T, R> T.runCatchingExceptCancellation(block: T.() -> R): Result<R> {
+    public inline fun <R> Span.runCatchingExceptCancellation(block: Span.() -> R): Result<R> {
         return try {
-            Result.success(block())
+            val calculated = this.block()
+            endWithSuccess()
+            Result.success(calculated)
         } catch (e: CancellationException) {
+            endWithUnknown()
             throw e
         } catch (e: Throwable) {
+            endWithException(e)
             Result.failure(e)
         }
     }

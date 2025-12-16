@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.compose.compiler)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("kotlinx-serialization")
+
 }
 
 val projectVersion: String by rootProject.extra
@@ -89,6 +91,7 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.activity.compose)

@@ -35,6 +35,7 @@ class BicubicScreenViewModel @AssistedInject constructor(
 
     override fun onGenerateButtonClicked() {
         viewModelScope.launchTraced("GenerateBicubicBitmap", Dispatchers.Default) {
+
             val bitmap = bitmapGenerator.bicubicBitmap(
                 size = BitmapGenerator.Size(1000, 1000)
             )

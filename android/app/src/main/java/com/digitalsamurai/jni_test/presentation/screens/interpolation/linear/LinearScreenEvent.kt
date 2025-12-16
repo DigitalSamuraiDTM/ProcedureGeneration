@@ -3,6 +3,9 @@ package com.digitalsamurai.jni_test.presentation.screens.interpolation.linear
 import com.digitalsamurai.jni_test.core.viewmodel.UiEvent
 
 sealed class LinearScreenEvent : UiEvent() {
+
+    data object NetworkException: LinearScreenEvent()
+
     sealed class BitmapSaving : LinearScreenEvent() {
         class Success(val fileName: String) : LinearScreenEvent()
         data object Failed : LinearScreenEvent()

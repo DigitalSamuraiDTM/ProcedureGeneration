@@ -7,8 +7,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.digitalsamurai.core.otel.Otel
 import com.digitalsamurai.core.otel.extensions.addEvent
+import com.digitalsamurai.core.otel.extensions.endWithException
+import com.digitalsamurai.core.otel.extensions.setException
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
+import com.digitalsamurai.jni_test.data.network.GetLinearConfigRequest
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
+import com.digitalsamurai.opentelemetry.example.core.network.NetworkHttpClient
 import com.digitsamurai.algos.BitmapGenerator
 import com.digitsamurai.algos.BitmapRepository
 import com.digitsamurai.utils.extensions.generateName
@@ -25,6 +29,7 @@ import kotlinx.coroutines.Job
 class LinearScreenScreenViewModel @AssistedInject constructor(
     private val bitmapGenerator: BitmapGenerator,
     private val bitmapRepository: BitmapRepository,
+    private val networkHttpClient: NetworkHttpClient,
     @ApplicationContext
     private val applicationContext: Context,
     private val otel: Otel,
@@ -46,12 +51,13 @@ class LinearScreenScreenViewModel @AssistedInject constructor(
     override fun initialState(): LinearScreenState {
         return LinearScreenState(
             bitmapRendererState =
-                BitmapRenderer.default()
+                BitmapRenderer.default(),
+            isButtonLoading = false,
         )
     }
 
     override fun onBitmapRendererClicked(id: String) {
-        TODO("Not yet implemented")
+        // TODO
     }
 
     override fun undoImageSaving(id: String) {
@@ -64,17 +70,33 @@ class LinearScreenScreenViewModel @AssistedInject constructor(
     override fun onGenerateButtonClicked() {
         generatorJob?.cancel()
         generatorJob = viewModelScope.launchTraced("GenerateLinearBitmap", Dispatchers.Default) {
+            updateState {
+                it.copy(isButtonLoading = true)
+            }
+            val configuration = networkHttpClient.makeNetworkRequest(
+                networkHttpRequest = GetLinearConfigRequest(),
+                data = Unit,
+            ).getOrElse { t ->
+                event(LinearScreenEvent.NetworkException)
+                endWithException(t)
+                updateState {
+                    it.copy(isButtonLoading = false)
+                }
+                return@launchTraced
+            }
+
             val bitmap = bitmapGenerator.bilinearBitmap(
-                size = BitmapGenerator.Size(1000, 1000),
-                bilinearConfig = BitmapGenerator.BilinearConfig.Matrix(3)
+                size = BitmapGenerator.Size(configuration.width, configuration.height),
+                bilinearConfig = BitmapGenerator.BilinearConfig.Matrix(configuration.resolution)
             )
             val bitmapName = bitmap.generateName()
             updateState {
                 it.copy(
                     bitmapRendererState = BitmapRenderer.State.ContentBitmap(
                         bitmap = bitmap,
-                        id = bitmapName
-                    )
+                        id = bitmapName,
+                    ),
+                    isButtonLoading = false
                 )
             }
             if (isAutosaveEnabled) {

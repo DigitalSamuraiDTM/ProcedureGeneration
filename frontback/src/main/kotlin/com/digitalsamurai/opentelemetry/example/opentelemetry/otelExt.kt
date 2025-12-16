@@ -1,21 +1,33 @@
 package com.digitalsamurai.opentelemetry.example.opentelemetry
 
+import io.ktor.http.Headers
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.headers
 import io.ktor.server.application.createApplicationPlugin
+import io.ktor.server.application.hooks.ResponseBodyReadyForSend
 import io.ktor.server.application.hooks.ResponseSent
 import io.ktor.server.request.path
 import io.ktor.server.routing.RoutingCall
 import io.ktor.util.AttributeKey
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.StatusCode
+import io.opentelemetry.context.Context
+import io.opentelemetry.context.propagation.TextMapGetter
 
 fun buildOpenTelemetryPlugin(disabledRequests: Set<String>) = createApplicationPlugin("opentelemetry") {
     val spanKey = AttributeKey<Span>("otel-span")
+    val propagator = OtelHolder.get().propagators.textMapPropagator
+    val tracer = OtelHolder.get().getTracer("tracer")
+    val textMapGetter = object: TextMapGetter<Headers> {
+        override fun keys(carrier: Headers): Iterable<String?> =carrier.names()
+        override fun get(carrier: Headers?, key: String): String? = carrier?.get(key)
+    }
     onCall { call ->
         if (disabledRequests.contains(call.request.path())) {
             return@onCall
         }
-        val requestSpan = OtelHolder.newSpan(call.request.path())
+        val parentContext = propagator.extract(Context.current(), call.request.headers, textMapGetter)
+        val requestSpan = tracer.spanBuilder(call.request.path()).setParent(parentContext).startSpan()
         call.attributes.put(spanKey, requestSpan)
     }
     on(ResponseSent) { call ->
@@ -32,7 +44,7 @@ fun buildOpenTelemetryPlugin(disabledRequests: Set<String>) = createApplicationP
 private fun HttpStatusCode?.toSpanStatus(): StatusCode {
     val value = this?.value
     return when (value) {
-        null -> StatusCode.ERROR
+        null -> StatusCode.UNSET
         200 -> StatusCode.OK
         else -> StatusCode.ERROR
     }

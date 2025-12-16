@@ -13,7 +13,7 @@ fun Modifier.tracedClickable(
 ): Modifier {
     val screenSpan = LocalScreenSpan.current
     return clickable {
-        screenSpan.addEvent("Clicked", mapOf("element" to elementName))
+        screenSpan.addEvent("clicked", mapOf("element" to elementName))
         onClick()
     }
 }

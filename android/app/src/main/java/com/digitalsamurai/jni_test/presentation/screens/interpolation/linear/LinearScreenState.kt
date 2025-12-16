@@ -5,4 +5,5 @@ import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
 
 data class LinearScreenState(
     val bitmapRendererState: BitmapRenderer.State,
+    val isButtonLoading: Boolean,
 ) : UiState()

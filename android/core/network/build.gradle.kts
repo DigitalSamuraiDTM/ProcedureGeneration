@@ -37,6 +37,7 @@ android {
     }
 }
 dependencies {
+    implementation(project(":android:core:otel"))
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.contentnegotiation)
     implementation(libs.ktor.serialization.json)

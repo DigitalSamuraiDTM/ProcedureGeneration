@@ -3,7 +3,9 @@ package com.digitalsamurai.opentelemetry.example.opentelemetry
 import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.trace.Span
+import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator
 import io.opentelemetry.context.Context
+import io.opentelemetry.context.propagation.ContextPropagators
 import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
 import io.opentelemetry.sdk.OpenTelemetrySdk
@@ -60,6 +62,7 @@ internal object OtelHolder {
             .addLogRecordProcessor(SimpleLogRecordProcessor.create(logExporter))
             .build()
         OpenTelemetrySdk.builder()
+            .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
             .setLoggerProvider(sdkLogProvider)
             .setTracerProvider(sdkTracerProvider)
             .buildAndRegisterGlobal()

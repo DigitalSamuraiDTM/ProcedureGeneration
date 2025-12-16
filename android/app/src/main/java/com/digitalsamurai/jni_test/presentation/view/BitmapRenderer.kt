@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import com.digitalsamurai.jni_test.core.modifier.tracedClickable
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,7 +51,7 @@ object BitmapRenderer {
         onBitmapIdLoad: ((path: String) -> Deferred<Bitmap>)? = null,
     ) {
         val loaderCoroutineScope = rememberCoroutineScope()
-        Box(modifier = modifier.clickable { onClick(state.id) }) {
+        Box(modifier = modifier.tracedClickable("BitmapImage") { onClick(state.id) }) {
             when (state) {
                 State.Empty -> {
                     Icon(

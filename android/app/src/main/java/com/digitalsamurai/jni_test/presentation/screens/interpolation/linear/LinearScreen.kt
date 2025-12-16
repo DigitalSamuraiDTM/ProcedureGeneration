@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -56,6 +57,11 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScr
                 )
                 if (actionResult == SnackbarResult.ActionPerformed) actions.undoImageSaving(event.fileName)
             }
+
+            LinearScreenEvent.NetworkException -> snackbar.showSnackbar(
+                message = "Network exception",
+                duration = SnackbarDuration.Long,
+            )
         }
     }
 
@@ -114,7 +120,11 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScr
                     },
                 onClick = actions::onGenerateButtonClicked
             ) {
-                Text("Generate")
+                if (state.isButtonLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    Text("Generate")
+                }
             }
         }
     }

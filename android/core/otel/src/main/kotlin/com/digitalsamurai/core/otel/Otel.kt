@@ -14,7 +14,7 @@ import io.opentelemetry.context.Context
 import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
 
-class Otel() {
+public class Otel() {
 
     /**
      * Core element

@@ -28,3 +28,7 @@ fun Span.endWithUnknown() {
     setStatus(StatusCode.UNSET)
     end()
 }
+
+fun Span.setException(t: Throwable) {
+    setAttribute("exception", t.localizedMessage ?: "no message")
+}

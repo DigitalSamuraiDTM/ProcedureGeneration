@@ -40,6 +40,6 @@ dependencies {
     implementation(libs.otel.semconv)
     implementation(libs.otel.ktor)
     // KOTLINX
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    implementation(libs.kotlinx.serialization.json)
 
 }
