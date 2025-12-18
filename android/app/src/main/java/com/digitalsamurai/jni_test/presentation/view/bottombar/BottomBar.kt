@@ -24,12 +24,18 @@ object BottomBar {
 
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
-
         BottomAppBar(modifier = modifier) {
             items.forEach { item ->
                 NavigationBarItem(
                     selected = currentRoute == item.route,
-                    onClick = { navController.navigate(item.route) },
+                    onClick = {
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    },
                     icon = { Icon(item.icon, item.title) },
                     label = { Text(item.title) })
             }
