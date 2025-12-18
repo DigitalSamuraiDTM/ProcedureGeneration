@@ -14,7 +14,7 @@ import io.opentelemetry.context.Context
 import io.opentelemetry.exporter.otlp.http.logs.OtlpHttpLogRecordExporter
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
 
-public class Otel() {
+object Otel {
 
     /**
      * Core element
@@ -69,13 +69,13 @@ public class Otel() {
             false
         }
     }
-    private companion object {
-        const val GLOBAL_KEY_SESSION_ID = "session_id"
-        const val GLOBAL_KEY_APP_VERSION = "app_version"
 
-        const val LOG_RECORD_ENDPOINT = BuildConfig.OTEL_HOST + "/v1/logs"
-        const val SPAN_RECORD_ENDPOINT = BuildConfig.OTEL_HOST + "/v1/traces"
+    const val GLOBAL_KEY_SESSION_ID = "session_id"
+    const val GLOBAL_KEY_APP_VERSION = "app_version"
 
-        const val MAIN_TRACER_NAME = "AppGenerator"
-    }
+    const val LOG_RECORD_ENDPOINT = BuildConfig.OTEL_HOST + "/v1/logs"
+    const val SPAN_RECORD_ENDPOINT = BuildConfig.OTEL_HOST + "/v1/traces"
+
+    const val MAIN_TRACER_NAME = "AppGenerator"
+
 }

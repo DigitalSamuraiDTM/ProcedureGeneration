@@ -18,7 +18,7 @@ import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.core.viewmodel.UiActions
 import com.digitalsamurai.jni_test.core.viewmodel.UiEvent
 import com.digitalsamurai.jni_test.core.viewmodel.UiState
-import com.digitalsamurai.jni_test.ext.startScreenSpan
+import com.digitalsamurai.jni_test.core.ext.startScreenSpan
 import io.opentelemetry.api.trace.Span
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow

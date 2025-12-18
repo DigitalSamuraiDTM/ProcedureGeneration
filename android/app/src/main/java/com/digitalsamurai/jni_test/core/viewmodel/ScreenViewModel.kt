@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 abstract class ScreenViewModel<STATE : UiState, EVENT : UiEvent, ACTIONS : UiActions>(
-    private val otel: Otel,
     private val screenSpan: Span,
 ) : ViewModel() {
 
@@ -29,7 +28,7 @@ abstract class ScreenViewModel<STATE : UiState, EVENT : UiEvent, ACTIONS : UiAct
         dispatcher: CoroutineDispatcher = Dispatchers.Main.immediate,
         launch: suspend Span.() -> Unit,
     ): Job {
-        val scopeSpan = otel.tracer().spanBuilder(spanName)
+        val scopeSpan = Otel.tracer().spanBuilder(spanName)
             .setParent(Context.current().with(screenSpan))
             .startSpan()
         val scopedContext = Context.current().with(scopeSpan).asContextElement()

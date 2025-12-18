@@ -6,7 +6,7 @@ import androidx.navigation.NavController
 import com.digitalsamurai.core.otel.Otel
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
-import com.digitsamurai.algos.BitmapRepository
+import com.digitalsamurai.jni_test.data.repositories.BitmapRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -19,12 +19,10 @@ import kotlinx.coroutines.async
 @HiltViewModel(assistedFactory = GalleryScreenViewModel.Factory::class)
 class GalleryScreenViewModel @AssistedInject constructor(
     private val bitmapRepository: BitmapRepository,
-    private val otel: Otel,
     @Assisted private val screenSpan: Span,
     @Assisted private val navController: NavController,
 ) : ScreenViewModel<GalleryScreenState, GalleryScreenEvent, GalleryScreenActions>(
     screenSpan = screenSpan,
-    otel = otel,
 ), GalleryScreenActions {
 
     @AssistedFactory

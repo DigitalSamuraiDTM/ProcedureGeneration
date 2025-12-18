@@ -1,14 +1,17 @@
-package com.digitsamurai.algos
+package com.digitalsamurai.jni_test.data.repositories
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.annotation.WorkerThread
+import com.digitalsamurai.core.otel.extensions.withTracedContext
 import com.digitsamurai.utils.extensions.generateName
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
+import kotlin.collections.set
 
 @WorkerThread
 class BitmapRepository @Inject constructor(
@@ -24,13 +27,13 @@ class BitmapRepository @Inject constructor(
         data class Value(val id: String) : Name()
     }
 
-    fun set(bitmap: Bitmap, id: Name = Name.Auto): Boolean {
+    suspend fun set(bitmap: Bitmap, id: Name = Name.Auto): Boolean = withTracedContext("BitmapRepository.set") {
         val fileName = when (id) {
             Name.Auto -> bitmap.generateName()
             is Name.Value -> id.id
         } + PNG_EXTENSION
         val file = File(storage, fileName)
-        return bitmap.compress(Bitmap.CompressFormat.PNG, 100, file.outputStream())
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, file.outputStream())
             .also { cache[fileName] = bitmap }
     }
 

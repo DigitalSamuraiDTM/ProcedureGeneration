@@ -16,11 +16,9 @@ import io.opentelemetry.api.trace.Span
 
 @HiltViewModel(assistedFactory = MainScreenViewModel.Factory::class)
 class MainScreenViewModel @AssistedInject constructor(
-    private val otel: Otel,
     @Assisted private val screenSpan: Span,
     @Assisted private val navController: NavController,
 ) : ScreenViewModel<MainScreenState, MainScreenEvent, MainScreenActions>(
-    otel = otel,
     screenSpan = screenSpan
 ), MainScreenActions {
 

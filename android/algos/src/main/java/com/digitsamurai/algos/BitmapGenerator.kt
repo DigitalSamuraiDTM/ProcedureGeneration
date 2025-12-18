@@ -26,7 +26,7 @@ class BitmapGenerator @Inject constructor() {
     private fun newBitmapTemplate(size: Size): Bitmap = Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888)
 
     @WorkerThread
-    suspend fun bicubicBitmap(size: Size): Bitmap = with(Dispatchers.Default) {
+    suspend fun bicubicBitmap(size: Size): Bitmap {
         val matrix = mutableListOf<List<Color>>()
         repeat(4) {
             val line = mutableListOf<Color>()
@@ -73,11 +73,11 @@ class BitmapGenerator @Inject constructor() {
                 )
             }
         }
-        return@with bitmap
+        return bitmap
     }
 
     @WorkerThread
-    suspend fun bilinearBitmap(size: Size, bilinearConfig: BilinearConfig.Matrix): Bitmap = with(Dispatchers.Default) {
+    suspend fun bilinearBitmap(size: Size, bilinearConfig: BilinearConfig.Matrix): Bitmap {
         val bitmap = newBitmapTemplate(size)
         val matrixColor = mutableListOf<List<Color>>()
         repeat(bilinearConfig.resolution) { h ->
@@ -116,7 +116,7 @@ class BitmapGenerator @Inject constructor() {
             }
         }
 
-        return@with bitmap
+        return bitmap
     }
 
     suspend fun bilinearBitmap(size: Size, bilinearConfig: BilinearConfig.FourPoints): Bitmap = withContext(Dispatchers.Default) {

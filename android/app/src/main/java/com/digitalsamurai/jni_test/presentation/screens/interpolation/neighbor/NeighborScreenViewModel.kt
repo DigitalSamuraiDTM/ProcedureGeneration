@@ -9,7 +9,7 @@ import com.digitalsamurai.core.otel.extensions.addEvent
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
 import com.digitsamurai.algos.BitmapGenerator
-import com.digitsamurai.algos.BitmapRepository
+import com.digitalsamurai.jni_test.data.repositories.BitmapRepository
 import com.digitsamurai.utils.extensions.generateName
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -21,12 +21,10 @@ import io.opentelemetry.api.trace.Span
 class NeighborScreenViewModel @AssistedInject constructor(
     private val bitmapGenerator: BitmapGenerator,
     private val bitmapRepository: BitmapRepository,
-    private val otel: Otel,
     @Assisted private val screenSpan: Span,
     @Assisted private val navController: NavController,
 ) : ScreenViewModel<NeighborScreenState, NeighborScreenEvent, NeighborScreenActions>(
     screenSpan = screenSpan,
-    otel = otel,
 ), NeighborScreenActions {
 
     @AssistedFactory
@@ -75,7 +73,7 @@ class NeighborScreenViewModel @AssistedInject constructor(
         }
     }
 
-    private fun autosaveBitmap(bitmap: Bitmap, id: String): Boolean {
+    private suspend fun autosaveBitmap(bitmap: Bitmap, id: String): Boolean {
         val isSaved = bitmapRepository.set(bitmap, BitmapRepository.Name.Value(id))
         val event = if (isSaved) {
             NeighborScreenEvent.BitmapSaving.Success(id)

@@ -1,9 +1,7 @@
 package com.digitalsamurai.opentelemetry.example.core.network
 
 import com.digitalsamurai.core.otel.Otel
-import com.digitalsamurai.core.otel.extensions.endWithException
-import com.digitalsamurai.core.otel.extensions.endWithSuccess
-import com.digitalsamurai.core.otel.extensions.endWithUnknown
+import com.digitalsamurai.core.otel.extensions.withTracedContext
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
@@ -18,12 +16,7 @@ import io.ktor.http.path
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.appendAll
 import io.ktor.util.reflect.typeInfo
-import io.ktor.utils.io.CancellationException
-import io.opentelemetry.api.trace.Span
-import io.opentelemetry.context.Context
-import io.opentelemetry.extension.kotlin.asContextElement
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
@@ -49,32 +42,30 @@ public class NetworkHttpClient(
     public suspend inline fun <reified REQUEST_DATA : Any, reified RESPONSE_DATA : Any> makeNetworkRequest(
         networkHttpRequest: NetworkHttpRequest<REQUEST_DATA, RESPONSE_DATA>,
         data: REQUEST_DATA,
-    ): Result<RESPONSE_DATA> = withContext(Dispatchers.IO + Context.current().asContextElement()) {
-        otel.tracer().spanBuilder(networkHttpRequest.path)
-            .startSpan()
-            .apply { makeCurrent() }
-            .runCatchingExceptCancellation {
-                val httpResponse = client.request {
-                    method = networkHttpRequest.method.toKtorMethod()
-                    headers.appendAll("traceparent" to "00-${spanContext.traceId}-${spanContext.spanId}-01",)
-                    url {
-                        host = hostAddress
-                        port = portAddress
-                        path(networkHttpRequest.path)
-                    }
-                    if (method == HttpMethod.Get) {
-                        Json.encodeToJsonElement(data).jsonObject.entries.forEach { jsonEntry ->
-                            url.parameters.append(jsonEntry.key, jsonEntry.value.toString().trim('"'))
-                        }
-                    } else {
-                        contentType(ContentType.Application.Json)
-                        setBody(data, typeInfo<REQUEST_DATA>())
-                    }
+    ): Result<RESPONSE_DATA> = withTracedContext(networkHttpRequest.path, Dispatchers.IO) {
+        runCatching {
+            val httpResponse = client.request {
+                method = networkHttpRequest.method.toKtorMethod()
+                headers.appendAll("traceparent" to "00-${span.spanContext.traceId}-${span.spanContext.spanId}-01")
+                url {
+                    host = hostAddress
+                    port = portAddress
+                    path(networkHttpRequest.path)
                 }
-                val responseBody = httpResponse.body<RESPONSE_DATA>()
-                responseBody
+                if (method == HttpMethod.Get) {
+                    Json.encodeToJsonElement(data).jsonObject.entries.forEach { jsonEntry ->
+                        url.parameters.append(jsonEntry.key, jsonEntry.value.toString().trim('"'))
+                    }
+                } else {
+                    contentType(ContentType.Application.Json)
+                    setBody(data, typeInfo<REQUEST_DATA>())
+                }
             }
+            val responseBody = httpResponse.body<RESPONSE_DATA>()
+            responseBody
+        }
     }
+
 
 //    public inline fun <reified REQUEST_DATA : Any, reified RESPONSE_DATA : Any> pollNetworkRequest(
 //        networkHttpRequest: NetworkHttpRequest<REQUEST_DATA, RESPONSE_DATA>,
@@ -115,24 +106,6 @@ public class NetworkHttpClient(
             NetworkHttpRequest.Method.GET -> HttpMethod.Get
             NetworkHttpRequest.Method.PUT -> HttpMethod.Put
             NetworkHttpRequest.Method.DELETE -> HttpMethod.Delete
-        }
-    }
-
-    /**
-     * Выполняем блок кода, пропуская отмену корутины, если происходила на участке.
-     * Позволяет не учитывать пользовательскую отмену корутины во время поиска (с дебаунсом) или отмены действия
-     */
-    public inline fun <R> Span.runCatchingExceptCancellation(block: Span.() -> R): Result<R> {
-        return try {
-            val calculated = this.block()
-            endWithSuccess()
-            Result.success(calculated)
-        } catch (e: CancellationException) {
-            endWithUnknown()
-            throw e
-        } catch (e: Throwable) {
-            endWithException(e)
-            Result.failure(e)
         }
     }
 }

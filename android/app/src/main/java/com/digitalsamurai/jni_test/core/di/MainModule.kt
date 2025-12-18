@@ -1,4 +1,4 @@
-package com.digitalsamurai.jni_test.di
+package com.digitalsamurai.jni_test.core.di
 
 import android.content.Context
 import com.digitalsamurai.core.otel.Otel
@@ -16,22 +16,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class MainModule {
 
-
     @Provides
     @Singleton
-    fun provideOtel(@ApplicationContext context: Context): Otel {
-        return (context.applicationContext as GeneratorApplication).otel
-    }
-
-    @Provides
-    @Singleton
-    fun provideNetworkHttpClient(
-        otel: Otel,
-    ): NetworkHttpClient {
+    fun provideNetworkHttpClient(): NetworkHttpClient {
         return NetworkHttpClient(
             hostAddress = "10.0.2.2",
             portAddress = 8080,
-            otel = otel,
+            otel = Otel,
         )
     }
 }

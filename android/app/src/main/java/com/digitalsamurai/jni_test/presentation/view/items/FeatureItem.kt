@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import com.digitalsamurai.jni_test.core.modifier.tracedClickable
 import com.digitalsamurai.jni_test.presentation.theme.AppTheme
 import com.digitalsamurai.jni_test.presentation.theme.ThemeMod
 
@@ -41,7 +42,7 @@ object FeatureItem {
         state: State,
         onClick: () -> Unit,
     ) {
-        Card(modifier = modifier.clickable { onClick() }) {
+        Card(modifier = modifier.tracedClickable("Tile") { onClick() }) {
             Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
                 if (state.icon == null) {
                     Icon(imageVector = Icons.Default.Favorite, contentDescription = state.title, modifier = Modifier.weight(2f))

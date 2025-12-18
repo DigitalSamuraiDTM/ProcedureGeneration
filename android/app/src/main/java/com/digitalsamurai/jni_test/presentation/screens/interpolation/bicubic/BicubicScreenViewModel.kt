@@ -16,11 +16,9 @@ import kotlinx.coroutines.Dispatchers
 @HiltViewModel(assistedFactory = BicubicScreenViewModel.Factory::class)
 class BicubicScreenViewModel @AssistedInject constructor(
     private val bitmapGenerator: BitmapGenerator,
-    private val otel: Otel,
     @Assisted private val screenSpan: Span,
     @Assisted private val navController: NavController,
 ) : ScreenViewModel<BicubicScreenState, BicubicScreenEvent, BicubicScreenActions>(
-    otel = otel,
     screenSpan = screenSpan
 ), BicubicScreenActions {
 

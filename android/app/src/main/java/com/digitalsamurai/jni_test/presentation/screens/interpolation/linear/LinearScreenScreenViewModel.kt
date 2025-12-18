@@ -11,33 +11,29 @@ import com.digitalsamurai.core.otel.extensions.endWithException
 import com.digitalsamurai.core.otel.extensions.setException
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.data.network.GetLinearConfigRequest
+import com.digitalsamurai.jni_test.domain.GenerateBilinearImageUseCase
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
 import com.digitalsamurai.opentelemetry.example.core.network.NetworkHttpClient
 import com.digitsamurai.algos.BitmapGenerator
-import com.digitsamurai.algos.BitmapRepository
+import com.digitalsamurai.jni_test.data.repositories.BitmapRepository
 import com.digitsamurai.utils.extensions.generateName
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.opentelemetry.api.trace.Span
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 
 @HiltViewModel(assistedFactory = LinearScreenScreenViewModel.Factory::class)
 class LinearScreenScreenViewModel @AssistedInject constructor(
-    private val bitmapGenerator: BitmapGenerator,
+    private val generateBilinearImageUseCase: GenerateBilinearImageUseCase,
     private val bitmapRepository: BitmapRepository,
     private val networkHttpClient: NetworkHttpClient,
-    @ApplicationContext
-    private val applicationContext: Context,
-    private val otel: Otel,
     @Assisted private val screenSpan: Span,
     @Assisted private val navController: NavController,
 ) : ScreenViewModel<LinearScreenState, LinearScreenEvent, LinearScreenActions>(
     screenSpan = screenSpan,
-    otel = otel
 ), LinearScreenActions {
 
     @AssistedFactory
@@ -85,7 +81,7 @@ class LinearScreenScreenViewModel @AssistedInject constructor(
                 return@launchTraced
             }
 
-            val bitmap = bitmapGenerator.bilinearBitmap(
+            val bitmap = generateBilinearImageUseCase(
                 size = BitmapGenerator.Size(configuration.width, configuration.height),
                 bilinearConfig = BitmapGenerator.BilinearConfig.Matrix(configuration.resolution)
             )
@@ -106,7 +102,7 @@ class LinearScreenScreenViewModel @AssistedInject constructor(
         }
     }
 
-    private fun autosaveBitmap(bitmap: Bitmap, name: String): Boolean {
+    private suspend fun autosaveBitmap(bitmap: Bitmap, name: String): Boolean {
         val isSaved = bitmapRepository.set(bitmap, BitmapRepository.Name.Value(name))
         val event = if (isSaved) LinearScreenEvent.BitmapSaving.Success(name) else LinearScreenEvent.BitmapSaving.Failed
         event(event)

@@ -8,7 +8,6 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class GeneratorApplication : Application() {
 
-    lateinit var otel: Otel
 
     /**
      * launch otel only in main process
@@ -17,8 +16,7 @@ class GeneratorApplication : Application() {
 
     override fun onCreate() {
         if (isProcessForOtel()) {
-            otel = Otel()
-            val isInited = otel.initOtel(this)
+            val isInited = Otel.initOtel(this)
             if (!isInited) error("fatal init otel")
         }
         super.onCreate()
