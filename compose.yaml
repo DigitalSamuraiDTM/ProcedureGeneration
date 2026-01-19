@@ -1,10 +1,20 @@
 services:
+  frontback:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontback
+    container_name: frontback
+    ports:
+      - "8080:8080"
+    environment:
+      - JVM_OPTS=-Xms512m -Xmx1G
+    restart: unless-stopped
   collector:
     image: "otel/opentelemetry-collector-contrib@sha256:e39311df1f3d941923c00da79ac7ba6269124a870ee87e3c3ad24d60f8aee4d2"
     volumes:
-      - ./collector.yaml:/etc/demo-collector.yaml
+      - ./collector.yaml:/etc/otel/collector.yaml
     entrypoint: ["/otelcol-contrib"]
-    command: ["--config", "/etc/demo-collector.yaml"]
+    command: ["--config", "/etc/otel/collector.yaml"]
     ports:
       - "4317:4317" # OTLP gRPC
       - "4318:4318" # OTLP HTTP
