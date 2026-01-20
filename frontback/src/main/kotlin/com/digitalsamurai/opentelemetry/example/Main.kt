@@ -15,19 +15,27 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.delay
-
+// TODO докер пропускает просто напросто стадию сборки и сразу копирование делает
 
 fun main(args: Array<String>) {
+    val environmentData = EnvironmentData.fromArgsOrSystemEnv(args)
     // start server when all systems ready
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
-        .start(wait = true)
+    embeddedServer(
+        factory = Netty,
+        port = environmentData.server.port,
+        host = environmentData.server.host,
+        module = {
+            module(environmentData)
+        }
+    ).start(wait = true)
 }
 
-internal fun Application.module() {
+internal fun Application.module(environmentData: EnvironmentData) {
+    print("INIT: ${environmentData}")
     installRequestId()
     installSerialization()
     installLogging()
-    installOtel(OTEL_EXCLUDE_REQUESTS)
+    installOtel(otelData = environmentData.otel, disabledTracingRequests = OTEL_EXCLUDE_REQUESTS)
 
     val databaseInteractor = DatabaseInteractor()
     routing {

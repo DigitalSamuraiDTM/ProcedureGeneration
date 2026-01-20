@@ -1,4 +1,3 @@
-# Сборка
 FROM gradle:8.11 AS build
 COPY gradlew .
 COPY frontback frontback
@@ -7,9 +6,7 @@ COPY settings.gradle.kts .
 COPY build.gradle.kts .
 WORKDIR .
 RUN chmod +x gradlew
-RUN ./gradlew :frontback:clean :frontback:build --stacktrace
-
-# Запуск
+RUN ./gradlew :frontback:clean :frontback:build
 FROM eclipse-temurin:21-jre
 WORKDIR .
 COPY /frontback/build/libs/frontback-all.jar frontback-all.jar

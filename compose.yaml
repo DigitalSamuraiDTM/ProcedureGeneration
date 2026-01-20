@@ -8,6 +8,10 @@ services:
       - "8080:8080"
     environment:
       - JVM_OPTS=-Xms512m -Xmx1G
+      - server_host=0.0.0.0
+      - server_port=8080
+      - otel_host=collector
+      - otel_port=4318
     restart: unless-stopped
   collector:
     image: "otel/opentelemetry-collector-contrib@sha256:e39311df1f3d941923c00da79ac7ba6269124a870ee87e3c3ad24d60f8aee4d2"
