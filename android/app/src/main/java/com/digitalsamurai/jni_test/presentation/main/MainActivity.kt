@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.digitalsamurai.jni_test.Navigation
+import com.digitalsamurai.jni_test.presentation.screens.auth.AuthScreen
 import com.digitalsamurai.jni_test.presentation.screens.gallery.GalleryScreen
 import com.digitalsamurai.jni_test.presentation.screens.main.MainScreen
 import com.digitalsamurai.jni_test.presentation.screens.settings.SettingsScreen
@@ -57,7 +58,8 @@ class MainActivity : AppCompatActivity() {
                 }) { paddings ->
                     Navigation(
                         modifier = Modifier.padding(paddings),
-                        navController = navController
+                        navController = navController,
+                        startScreen = AuthScreen // TODO проверять был ли токен и открывать следующий экран если не был
                     )
                 }
             }

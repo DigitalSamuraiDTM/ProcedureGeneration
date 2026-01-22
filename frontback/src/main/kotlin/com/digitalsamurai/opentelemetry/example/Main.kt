@@ -13,9 +13,9 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.delay
-// TODO докер пропускает просто напросто стадию сборки и сразу копирование делает
 
 fun main(args: Array<String>) {
     val environmentData = EnvironmentData.fromArgsOrSystemEnv(args)
@@ -31,7 +31,6 @@ fun main(args: Array<String>) {
 }
 
 internal fun Application.module(environmentData: EnvironmentData) {
-    print("INIT: ${environmentData}")
     installRequestId()
     installSerialization()
     installLogging()
@@ -51,7 +50,10 @@ internal fun Application.module(environmentData: EnvironmentData) {
             call.respond(HttpStatusCode.OK, databaseInteractor.getDiagramConfiguration(call.requestSpan()))
         }
         get("/api/v1/diagram/neighbor/configuration") {
-            // TODO with other service
+
+        }
+        post("/api/v1/diagram/save") {
+
         }
     }
 }

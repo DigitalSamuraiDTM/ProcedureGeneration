@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
+import com.digitalsamurai.jni_test.presentation.screens.auth.AuthScreen
 import com.digitalsamurai.jni_test.presentation.screens.gallery.GalleryScreen
 import com.digitalsamurai.jni_test.presentation.screens.interpolation.bicubic.BicubicScreen
 import com.digitalsamurai.jni_test.presentation.screens.interpolation.linear.LinearScreen
@@ -15,7 +16,7 @@ import com.digitalsamurai.jni_test.presentation.screens.settings.SettingsScreen
 
 
 @Composable
-fun Navigation(modifier: Modifier, navController: NavHostController) {
+fun Navigation(modifier: Modifier, navController: NavHostController, startScreen: BaseScreen<*,*,*>) {
     NavHost(modifier = modifier, navController = navController, startDestination = startScreen.screenRoute) {
         appsScreen.forEach { screen ->
             composable(route = screen.screenRoute) {
@@ -24,10 +25,8 @@ fun Navigation(modifier: Modifier, navController: NavHostController) {
         }
     }
 }
-
-val startScreen: BaseScreen<*, *, *> = MainScreen
-
 val appsScreen = setOf<BaseScreen<*, *, *>>(
+    AuthScreen,
     SettingsScreen,
     MainScreen,
     LinearScreen,

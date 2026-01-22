@@ -46,12 +46,16 @@ public class NetworkHttpClient(
         runCatching {
             val httpResponse = client.request {
                 method = networkHttpRequest.method.toKtorMethod()
-                headers.appendAll("traceparent" to "00-${span.spanContext.traceId}-${span.spanContext.spanId}-01")
+                headers.append("traceparent", "00-${span.spanContext.traceId}-${span.spanContext.spanId}-01")
+                if (networkHttpRequest is AuthorizedNetworkHttpRequest) {
+                    headers.append("Authorization", networkHttpRequest.jwt.value)
+                }
                 url {
                     host = hostAddress
                     port = portAddress
                     path(networkHttpRequest.path)
                 }
+                // у гет метода нет тела же по идее, закодируем по кайфу в параметры
                 if (method == HttpMethod.Get) {
                     Json.encodeToJsonElement(data).jsonObject.entries.forEach { jsonEntry ->
                         url.parameters.append(jsonEntry.key, jsonEntry.value.toString().trim('"'))
