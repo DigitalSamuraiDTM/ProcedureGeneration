@@ -26,6 +26,7 @@ object BicubicScreen : BaseScreen<BicubicScreenState, BicubicScreenEvent, Bicubi
 
     override val routeName: String = "interpolation/bicubic"
     override val screenName: String = "BicubicScreen"
+    override val isNavigationBarEnabled: Boolean = false
 
     override suspend fun onEvent(
         event: BicubicScreenEvent,

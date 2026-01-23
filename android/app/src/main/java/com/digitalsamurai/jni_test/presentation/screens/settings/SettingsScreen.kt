@@ -20,6 +20,7 @@ object SettingsScreen :
 
     override val routeName: String = "settings"
     override val screenName: String = "SettingsScreen"
+    override val isNavigationBarEnabled: Boolean = true
 
 
     @Composable

@@ -24,6 +24,7 @@ object MainScreen : BaseScreen<MainScreenState, MainScreenEvent, MainScreenActio
 
     override val routeName: String = "main"
     override val screenName: String = "MainScreen"
+    override val isNavigationBarEnabled: Boolean = true
 
     @Composable
     override fun MakeViewModel(screenSpan: Span, navController: NavController): MainScreenViewModel {

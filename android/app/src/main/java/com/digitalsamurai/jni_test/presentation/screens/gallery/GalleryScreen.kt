@@ -21,6 +21,7 @@ object GalleryScreen : BaseScreen<GalleryScreenState, GalleryScreenEvent, Galler
 
     override val routeName: String = "gallery"
     override val screenName: String = "GalleryScreen"
+    override val isNavigationBarEnabled: Boolean = true
 
 
     @Composable

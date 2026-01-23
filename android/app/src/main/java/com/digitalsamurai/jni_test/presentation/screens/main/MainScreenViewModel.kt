@@ -1,12 +1,11 @@
 package com.digitalsamurai.jni_test.presentation.screens.main
 
 import androidx.navigation.NavController
-import com.digitalsamurai.core.otel.Otel
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
+import com.digitalsamurai.jni_test.data.network.repository.AuthRepository
 import com.digitalsamurai.jni_test.presentation.screens.interpolation.bicubic.BicubicScreen
 import com.digitalsamurai.jni_test.presentation.screens.interpolation.linear.LinearScreen
 import com.digitalsamurai.jni_test.presentation.screens.interpolation.neighbor.NeighborScreen
-import com.digitalsamurai.jni_test.presentation.view.ImageSelector
 import com.digitalsamurai.jni_test.presentation.view.items.FeatureItem
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -18,6 +17,7 @@ import io.opentelemetry.api.trace.Span
 class MainScreenViewModel @AssistedInject constructor(
     @Assisted private val screenSpan: Span,
     @Assisted private val navController: NavController,
+    private val authRepository: AuthRepository,
 ) : ScreenViewModel<MainScreenState, MainScreenEvent, MainScreenActions>(
     screenSpan = screenSpan
 ), MainScreenActions {
@@ -27,26 +27,40 @@ class MainScreenViewModel @AssistedInject constructor(
         fun get(screenSpan: Span, navController: NavController): MainScreenViewModel
     }
 
-    override fun initialState(): MainScreenState = MainScreenState(
-        imageSelectorState = ImageSelector.defaultState(),
-        featuresItems = listOf(
-            FeatureItem.State(
-                id = LinearScreen.screenRoute,
-                title = "Linear interpolation",
-                icon = null
-            ),
-            FeatureItem.State(
-                id = NeighborScreen.screenRoute,
-                title = "Nearest neighbor interpolation",
-                icon = null
-            ),
-            FeatureItem.State(
-                id = BicubicScreen.screenRoute,
-                title = "Bicubic interpolation",
-                icon = null
+    override fun initialState(): MainScreenState {
+        return MainScreenState(emptyList())
+    }
+
+    init {
+        val features = buildList {
+            add(
+                FeatureItem.State(
+                    id = LinearScreen.screenRoute,
+                    title = "Linear interpolation",
+                    icon = null
+                )
             )
-        )
-    )
+            if (authRepository.isTokenExist()) {
+                add(
+                    FeatureItem.State(
+                        id = NeighborScreen.screenRoute,
+                        title = "Nearest neighbor interpolation",
+                        icon = null
+                    ),
+                )
+                add(
+                    FeatureItem.State(
+                        id = BicubicScreen.screenRoute,
+                        title = "Bicubic interpolation",
+                        icon = null
+                    )
+                )
+            }
+        }
+        updateState {
+            it.copy(featuresItems = features)
+        }
+    }
 
 
     override fun generateNoises() {

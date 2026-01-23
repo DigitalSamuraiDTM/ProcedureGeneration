@@ -32,14 +32,13 @@ internal class AuthViewModel @AssistedInject constructor(
         fun build(screenSpan: Span, navController: NavController): AuthViewModel
     }
 
-
     private var authJob: Job? = null
     override fun onLoginButtonClicked() {
         if (authJob?.isActive != true) {
             authJob = viewModelScope.launchTraced("Authorization",Dispatchers.IO) {
                 updateState {
                     it.copy(
-                        login = it.login.copy(isEnabled = false),
+                        login = it.login.copy(isEnabled = false, isLoading = true),
                         password = it.password.copy(isEnabled = false),
                         isAnonymButtonEnabled = false,
                     )
@@ -52,9 +51,10 @@ internal class AuthViewModel @AssistedInject constructor(
                     )
                 ).getOrElse { t ->
                     setException(t)
+                    event(AuthScreenEvent.AuthException)
                     updateState {
                         it.copy(
-                            login = it.login.copy(isError = true, isEnabled = true),
+                            login = it.login.copy(isError = true, isEnabled = true, isLoading = false),
                             password = it.password.copy(isError = true, isEnabled = true)
                         )
                     }
@@ -67,7 +67,8 @@ internal class AuthViewModel @AssistedInject constructor(
     }
 
     override fun onAnonymButtonClicked() {
-
+        // todo new root chain
+        navController.navigate(MainScreen.screenRoute)
     }
 
 

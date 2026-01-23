@@ -29,6 +29,7 @@ object NeighborScreen :
 
     override val routeName: String = "interpolation/neighbor"
     override val screenName: String = "NeighborScreen"
+    override val isNavigationBarEnabled: Boolean = false
 
     @Composable
     override fun MakeViewModel(screenSpan: Span, navController: NavController): NeighborScreenViewModel {

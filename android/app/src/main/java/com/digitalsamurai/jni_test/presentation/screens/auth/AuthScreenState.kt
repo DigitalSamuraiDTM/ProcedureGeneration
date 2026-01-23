@@ -12,6 +12,7 @@ data class AuthScreenState(
     data class Login(
         val text: String,
         val isEnabled: Boolean,
+        val isLoading: Boolean,
         val isError: Boolean,
     )
 
@@ -23,7 +24,7 @@ data class AuthScreenState(
 
     companion object {
         fun default(): AuthScreenState = AuthScreenState(
-            login = Login("", true, false),
+            login = Login("", true, false, false),
             password = Password("", true, false),
             isLoginButtonLoading = false,
             isAnonymButtonEnabled = true,

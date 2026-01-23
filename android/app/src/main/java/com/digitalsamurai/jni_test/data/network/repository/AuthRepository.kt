@@ -6,6 +6,9 @@ import com.digitalsamurai.opentelemetry.example.core.network.models.Jwt
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+/**
+ * ТАК ДЕЛАТЬ НИКОГДА НЕ НАДО!!! НЕ СТОИТ ХРАНИТЬ АВТОРИЗАЦИОННЫЕ ТОКЕНЫ В НЕЗАШИФРОВАННОМ ХРАНИЛИЩЕ
+ */
 class AuthRepository @Inject constructor(
     @ApplicationContext
     private val applicationContext: Context,
@@ -27,6 +30,10 @@ class AuthRepository @Inject constructor(
             cache = Jwt(it)
             cache
         }
+    }
+
+    fun isTokenExist(): Boolean {
+        return (cache ?: preferences.getString(PREFERENCE_KEY, null)) != null
     }
 
     private companion object {

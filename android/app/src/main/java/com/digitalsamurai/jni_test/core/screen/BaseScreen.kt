@@ -32,6 +32,7 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
      */
     protected abstract val screenName: String
     protected abstract val routeName: String
+    public abstract val isNavigationBarEnabled: Boolean
 
     val screenRoute get() = ROOT + routeName
 

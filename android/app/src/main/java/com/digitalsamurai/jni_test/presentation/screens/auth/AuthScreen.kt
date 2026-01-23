@@ -33,14 +33,17 @@ import io.opentelemetry.api.trace.Span
 internal object AuthScreen : BaseScreen<AuthScreenState, AuthScreenEvent, AuthScreenActions>() {
 
     override val screenName: String = "auth"
-    override val routeName: String = "AuthScree"
+    override val routeName: String = "AuthScreen"
+    override val isNavigationBarEnabled: Boolean = false
 
     override suspend fun onEvent(
         event: AuthScreenEvent,
         actions: AuthScreenActions,
         snackbar: SnackbarHostState
     ) {
-
+        when(event) {
+            AuthScreenEvent.AuthException -> snackbar.showSnackbar("Authorization failed")
+        }
     }
 
     @Composable
@@ -98,9 +101,9 @@ internal object AuthScreen : BaseScreen<AuthScreenState, AuthScreenEvent, AuthSc
                             .height(60.dp)
                             .fillMaxWidth(),
                         buttonName = "AuthButton",
-                        onClick = { if (!state.isLoginButtonLoading) actions.onLoginButtonClicked() }
+                        onClick = { if (!state.login.isLoading) actions.onLoginButtonClicked() }
                     ) {
-                        if (state.isLoginButtonLoading) {
+                        if (state.login.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(32.dp),
                                 color = Color.White,

@@ -29,6 +29,7 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScr
 
     override val routeName: String = "interpolation/linear"
     override val screenName: String = "LinearScreen"
+    override val isNavigationBarEnabled: Boolean = false
 
 
     @Composable
