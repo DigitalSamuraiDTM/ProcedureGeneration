@@ -6,7 +6,7 @@ import com.digitalsamurai.opentelemetry.example.opentelemetry.buildOpenTelemetry
 import io.ktor.server.application.*
 
 fun Application.installOtel(
-    otelData: EnvironmentData.OtelData,
+    otelData: EnvironmentData.Services.Otel,
     disabledTracingRequests: Set<String>,
 ) {
     val openTelemetry = OtelHolder.register(otelData)

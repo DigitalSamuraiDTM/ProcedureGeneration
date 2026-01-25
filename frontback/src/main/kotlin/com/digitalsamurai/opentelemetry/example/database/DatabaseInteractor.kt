@@ -16,4 +16,8 @@ class DatabaseInteractor {
         delay(100)
         BilinearDiagramConfigurationDto(1000, 1000, 4)
     }
+
+    suspend fun getNeighborConfiguration() {
+        TODO()
+    }
 }

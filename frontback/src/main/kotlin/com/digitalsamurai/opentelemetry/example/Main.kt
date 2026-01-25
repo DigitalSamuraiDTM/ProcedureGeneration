@@ -1,20 +1,19 @@
 package com.digitalsamurai.opentelemetry.example
 
+import com.digitalsamurai.opentelemetry.example.auth.AuthInteractor
+import com.digitalsamurai.opentelemetry.example.auth.getAuthorized
 import com.digitalsamurai.opentelemetry.example.database.DatabaseInteractor
 import com.digitalsamurai.opentelemetry.example.modules.installLogging
 import com.digitalsamurai.opentelemetry.example.modules.installOtel
 import com.digitalsamurai.opentelemetry.example.modules.installRequestId
 import com.digitalsamurai.opentelemetry.example.modules.installSerialization
 import com.digitalsamurai.opentelemetry.example.opentelemetry.requestSpan
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.Application
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.server.response.respond
-import io.ktor.server.response.respondText
-import io.ktor.server.routing.get
-import io.ktor.server.routing.post
-import io.ktor.server.routing.routing
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import kotlinx.coroutines.delay
 
 fun main(args: Array<String>) {
@@ -31,13 +30,16 @@ fun main(args: Array<String>) {
 }
 
 internal fun Application.module(environmentData: EnvironmentData) {
+    val auth = AuthInteractor(environmentData.services.auth)
+
     installRequestId()
     installSerialization()
     installLogging()
-    installOtel(otelData = environmentData.otel, disabledTracingRequests = OTEL_EXCLUDE_REQUESTS)
+    installOtel(otelData = environmentData.services.otel, disabledTracingRequests = OTEL_EXCLUDE_REQUESTS)
 
     val databaseInteractor = DatabaseInteractor()
     routing {
+
         get("/") {
             call.respondText("Hello world")
         }
@@ -49,10 +51,8 @@ internal fun Application.module(environmentData: EnvironmentData) {
         get("/api/v1/diagram/bilinear/configuration") {
             call.respond(HttpStatusCode.OK, databaseInteractor.getDiagramConfiguration(call.requestSpan()))
         }
-        get("/api/v1/diagram/neighbor/configuration") {
 
-        }
-        post("/api/v1/diagram/save") {
+        getAuthorized(auth, "/api/v1/diagram/neighbor/configuration") {
 
         }
     }

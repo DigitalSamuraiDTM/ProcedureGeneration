@@ -41,5 +41,10 @@ dependencies {
     implementation(libs.otel.ktor)
     // KOTLINX
     implementation(libs.kotlinx.serialization.json)
+    // KTOR CLIENT
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.contentnegotiation)
+    implementation(libs.ktor.serialization.json)
+    implementation(libs.ktor.client.okhttp)
 
 }

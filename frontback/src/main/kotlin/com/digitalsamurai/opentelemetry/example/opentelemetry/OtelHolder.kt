@@ -37,7 +37,7 @@ internal object OtelHolder {
         return GlobalOpenTelemetry.get()
     }
 
-    fun register(otelData: EnvironmentData.OtelData) {
+    fun register(otelData: EnvironmentData.Services.Otel) {
         print("OTEL DATA: $otelData")
         val resources = Resource.builder()
             .put(ServiceAttributes.SERVICE_NAME, "Frontback")
