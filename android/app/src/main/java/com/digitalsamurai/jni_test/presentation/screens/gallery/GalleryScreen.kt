@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
 import com.digitsamurai.utils.extensions.pixToDp
@@ -25,9 +25,9 @@ object GalleryScreen : BaseScreen<GalleryScreenState, GalleryScreenEvent, Galler
 
 
     @Composable
-    override fun MakeViewModel(screenSpan: Span, navController: NavController): GalleryScreenViewModel {
-        return hiltViewModel<GalleryScreenViewModel, GalleryScreenViewModel.Factory> { f->
-            f.get(screenSpan, navController)
+    override fun MakeViewModel(screenSpan: Span, navigator: AppNavigator): GalleryScreenViewModel {
+        return hiltViewModel<GalleryScreenViewModel, GalleryScreenViewModel.Factory> { f ->
+            f.get(screenSpan, navigator)
         }
     }
 

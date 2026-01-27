@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.core.views.MyButton
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
@@ -33,9 +33,9 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScr
 
 
     @Composable
-    override fun MakeViewModel(screenSpan: Span, navController: NavController): LinearScreenScreenViewModel {
+    override fun MakeViewModel(screenSpan: Span, navigator: AppNavigator): LinearScreenScreenViewModel {
         return hiltViewModel<LinearScreenScreenViewModel, LinearScreenScreenViewModel.Factory> { f ->
-            f.get(screenSpan, navController)
+            f.get(screenSpan, navigator)
         }
     }
 

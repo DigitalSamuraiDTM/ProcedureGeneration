@@ -23,7 +23,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.core.views.MyButton
 import com.digitalsamurai.jni_test.presentation.theme.AppTheme
@@ -41,7 +41,7 @@ internal object AuthScreen : BaseScreen<AuthScreenState, AuthScreenEvent, AuthSc
         actions: AuthScreenActions,
         snackbar: SnackbarHostState
     ) {
-        when(event) {
+        when (event) {
             AuthScreenEvent.AuthException -> snackbar.showSnackbar("Authorization failed")
         }
     }
@@ -49,10 +49,10 @@ internal object AuthScreen : BaseScreen<AuthScreenState, AuthScreenEvent, AuthSc
     @Composable
     override fun MakeViewModel(
         screenSpan: Span,
-        navController: NavController
+        navigator: AppNavigator
     ): AuthScreenViewModel {
         return hiltViewModel<AuthScreenViewModel, AuthScreenViewModel.Factory> { f ->
-            f.build(screenSpan, navController)
+            f.build(screenSpan, navigator)
         }
     }
 

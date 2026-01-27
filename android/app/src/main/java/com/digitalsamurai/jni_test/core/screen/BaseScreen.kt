@@ -12,13 +12,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
 import com.digitalsamurai.jni_test.core.composition.LocalScreenSpan
+import com.digitalsamurai.jni_test.core.ext.startScreenSpan
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.core.viewmodel.UiActions
 import com.digitalsamurai.jni_test.core.viewmodel.UiEvent
 import com.digitalsamurai.jni_test.core.viewmodel.UiState
-import com.digitalsamurai.jni_test.core.ext.startScreenSpan
 import io.opentelemetry.api.trace.Span
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +32,7 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
      */
     protected abstract val screenName: String
     protected abstract val routeName: String
-    public abstract val isNavigationBarEnabled: Boolean
+    abstract val isNavigationBarEnabled: Boolean
 
     val screenRoute get() = ROOT + routeName
 
@@ -40,7 +40,7 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
      * Entry point for screen from navigation
      */
     @Composable
-    fun NavToScreen(navController: NavController) {
+    fun NavToScreen(navigator: AppNavigator) {
         val context = LocalContext.current
 
         val snackbarHostState = remember { SnackbarHostState() }
@@ -48,7 +48,7 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
 
         // Обеспечиваем возможность использовать span экрана всем, кто ниже по дереву compose
         CompositionLocalProvider(LocalScreenSpan provides screenSpan) {
-            val viewModel = MakeViewModel(screenSpan, navController)
+            val viewModel = MakeViewModel(screenSpan, navigator)
             val state = viewModel.state.collectAsState().value
             val events = viewModel.events
             traceStateUpdates(screenSpan, viewModel.state)
@@ -96,7 +96,7 @@ abstract class BaseScreen<STATE : UiState, EVENTS : UiEvent, ACTIONS : UiActions
     )
 
     @Composable
-    protected abstract fun MakeViewModel(screenSpan: Span, navController: NavController): ScreenViewModel<STATE, EVENTS, ACTIONS>
+    protected abstract fun MakeViewModel(screenSpan: Span, navigator: AppNavigator): ScreenViewModel<STATE, EVENTS, ACTIONS>
 
     @Composable
     abstract fun Screen(state: STATE, actions: ACTIONS)

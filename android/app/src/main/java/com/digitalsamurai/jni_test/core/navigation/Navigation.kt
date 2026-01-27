@@ -16,16 +16,17 @@ import com.digitalsamurai.jni_test.presentation.screens.settings.SettingsScreen
 
 
 @Composable
-fun Navigation(modifier: Modifier, navController: NavHostController, startScreen: BaseScreen<*,*,*>, onNavigateToScreen: (BaseScreen<*,*,*>)-> Unit) {
+fun Navigation(modifier: Modifier, navController: NavHostController, startScreen: BaseScreen<*, *, *>, onNavigateToScreen: (BaseScreen<*, *, *>) -> Unit) {
     NavHost(modifier = modifier, navController = navController, startDestination = startScreen.screenRoute) {
         appsScreen.forEach { screen ->
             composable(route = screen.screenRoute) {
                 onNavigateToScreen(screen)
-                screen.NavToScreen(navController)
+                screen.NavToScreen(AppNavigator(navController))
             }
         }
     }
 }
+
 val appsScreen = setOf<BaseScreen<*, *, *>>(
     AuthScreen,
     SettingsScreen,

@@ -2,10 +2,10 @@ package com.digitalsamurai.jni_test.presentation.screens.gallery
 
 import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
-import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
 import com.digitalsamurai.jni_test.data.repositories.BitmapRepository
+import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -19,14 +19,14 @@ import kotlinx.coroutines.async
 class GalleryScreenViewModel @AssistedInject constructor(
     private val bitmapRepository: BitmapRepository,
     @Assisted private val screenSpan: Span,
-    @Assisted private val navController: NavController,
+    @Assisted private val navigator: AppNavigator,
 ) : ScreenViewModel<GalleryScreenState, GalleryScreenEvent, GalleryScreenActions>(
     screenSpan = screenSpan,
 ), GalleryScreenActions {
 
     @AssistedFactory
     interface Factory {
-        fun get(screenSpan: Span, navController: NavController): GalleryScreenViewModel
+        fun get(screenSpan: Span, navigator: AppNavigator): GalleryScreenViewModel
     }
 
     override fun initialState(): GalleryScreenState {

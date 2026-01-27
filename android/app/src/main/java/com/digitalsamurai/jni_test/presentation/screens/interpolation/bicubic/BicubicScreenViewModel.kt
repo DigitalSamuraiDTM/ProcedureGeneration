@@ -1,7 +1,7 @@
 package com.digitalsamurai.jni_test.presentation.screens.interpolation.bicubic
 
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
 import com.digitsamurai.algos.BitmapGenerator
@@ -16,14 +16,14 @@ import kotlinx.coroutines.Dispatchers
 class BicubicScreenViewModel @AssistedInject constructor(
     private val bitmapGenerator: BitmapGenerator,
     @Assisted private val screenSpan: Span,
-    @Assisted private val navController: NavController,
+    @Assisted private val navigator: AppNavigator,
 ) : ScreenViewModel<BicubicScreenState, BicubicScreenEvent, BicubicScreenActions>(
     screenSpan = screenSpan
 ), BicubicScreenActions {
 
     @AssistedFactory
     interface Factory {
-        fun get(screenSpan: Span, navController: NavController): BicubicScreenViewModel
+        fun get(screenSpan: Span, navigator: AppNavigator): BicubicScreenViewModel
     }
 
     override fun initialState(): BicubicScreenState {

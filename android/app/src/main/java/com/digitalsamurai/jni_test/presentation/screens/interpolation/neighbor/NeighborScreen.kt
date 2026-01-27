@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.core.views.MyButton
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
@@ -32,9 +32,9 @@ object NeighborScreen :
     override val isNavigationBarEnabled: Boolean = false
 
     @Composable
-    override fun MakeViewModel(screenSpan: Span, navController: NavController): NeighborScreenViewModel {
+    override fun MakeViewModel(screenSpan: Span, navigator: AppNavigator): NeighborScreenViewModel {
         return hiltViewModel<NeighborScreenViewModel, NeighborScreenViewModel.Factory> { f ->
-            f.get(screenSpan, navController)
+            f.get(screenSpan, navigator)
         }
     }
 

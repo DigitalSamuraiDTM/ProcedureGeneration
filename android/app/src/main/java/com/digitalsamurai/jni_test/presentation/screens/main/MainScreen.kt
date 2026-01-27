@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.presentation.view.items.FeatureItem
 import io.opentelemetry.api.trace.Span
@@ -27,9 +27,9 @@ object MainScreen : BaseScreen<MainScreenState, MainScreenEvent, MainScreenActio
     override val isNavigationBarEnabled: Boolean = true
 
     @Composable
-    override fun MakeViewModel(screenSpan: Span, navController: NavController): MainScreenViewModel {
-        return hiltViewModel<MainScreenViewModel, MainScreenViewModel.Factory> { f->
-            f.get(screenSpan, navController)
+    override fun MakeViewModel(screenSpan: Span, navigator: AppNavigator): MainScreenViewModel {
+        return hiltViewModel<MainScreenViewModel, MainScreenViewModel.Factory> { f ->
+            f.get(screenSpan, navigator)
         }
     }
 

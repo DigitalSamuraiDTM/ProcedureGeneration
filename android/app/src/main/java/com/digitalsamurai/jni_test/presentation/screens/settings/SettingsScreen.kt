@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.presentation.view.ModConverter
 import io.opentelemetry.api.trace.Span
@@ -24,9 +24,9 @@ object SettingsScreen :
 
 
     @Composable
-    override fun MakeViewModel(screenSpan: Span, navController: NavController): SettingsScreenViewModel {
+    override fun MakeViewModel(screenSpan: Span, navigator: AppNavigator): SettingsScreenViewModel {
         return hiltViewModel<SettingsScreenViewModel, SettingsScreenViewModel.Factory> { f ->
-            f.get(navController, screenSpan)
+            f.get(navigator, screenSpan)
         }
     }
 

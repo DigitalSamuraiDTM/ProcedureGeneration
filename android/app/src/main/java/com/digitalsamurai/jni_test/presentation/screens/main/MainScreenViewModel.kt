@@ -1,6 +1,6 @@
 package com.digitalsamurai.jni_test.presentation.screens.main
 
-import androidx.navigation.NavController
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.data.network.repository.AuthRepository
 import com.digitalsamurai.jni_test.presentation.screens.interpolation.bicubic.BicubicScreen
@@ -16,7 +16,7 @@ import io.opentelemetry.api.trace.Span
 @HiltViewModel(assistedFactory = MainScreenViewModel.Factory::class)
 class MainScreenViewModel @AssistedInject constructor(
     @Assisted private val screenSpan: Span,
-    @Assisted private val navController: NavController,
+    @Assisted private val navigator: AppNavigator,
     private val authRepository: AuthRepository,
 ) : ScreenViewModel<MainScreenState, MainScreenEvent, MainScreenActions>(
     screenSpan = screenSpan
@@ -24,7 +24,7 @@ class MainScreenViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun get(screenSpan: Span, navController: NavController): MainScreenViewModel
+        fun get(screenSpan: Span, navigator: AppNavigator): MainScreenViewModel
     }
 
     override fun initialState(): MainScreenState {
@@ -69,13 +69,13 @@ class MainScreenViewModel @AssistedInject constructor(
 
     override fun onFeatureItemClicked(itemId: String) {
         when (itemId) {
-            LinearScreen.screenRoute -> navController.navigate(LinearScreen.screenRoute)
+            LinearScreen.screenRoute -> navigator.navigate(LinearScreen)
 
 
-            NeighborScreen.screenRoute -> navController.navigate(NeighborScreen.screenRoute)
+            NeighborScreen.screenRoute -> navigator.navigate(NeighborScreen)
 
 
-            BicubicScreen.screenRoute -> navController.navigate(BicubicScreen.screenRoute)
+            BicubicScreen.screenRoute -> navigator.navigate(BicubicScreen)
 
             else -> {
                 event(MainScreenEvent.UnknownFeature(itemId))

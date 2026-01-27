@@ -1,7 +1,6 @@
 package com.digitalsamurai.jni_test.presentation.screens.settings
 
-import androidx.navigation.NavController
-import com.digitalsamurai.core.otel.Otel
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.presentation.screens.main.MainScreen
 import com.digitalsamurai.jni_test.presentation.theme.ThemeController
@@ -16,7 +15,7 @@ import io.opentelemetry.api.trace.Span
 @HiltViewModel(assistedFactory = SettingsScreenViewModel.Factory::class)
 class SettingsScreenViewModel @AssistedInject constructor(
     private val themeController: ThemeController,
-    @Assisted private val navController: NavController,
+    @Assisted private val navigator: AppNavigator,
     @Assisted private val screenSpan: Span,
 ) : ScreenViewModel<SettingsScreenState, SettingsScreenEvent, SettingsScreenActions>(
     screenSpan = screenSpan
@@ -24,7 +23,7 @@ class SettingsScreenViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun get(navController: NavController, screenSpan: Span): SettingsScreenViewModel
+        fun get(navigator: AppNavigator, screenSpan: Span): SettingsScreenViewModel
     }
 
     override fun initialState(): SettingsScreenState = SettingsScreenState(
@@ -32,7 +31,7 @@ class SettingsScreenViewModel @AssistedInject constructor(
     )
 
     fun toMainScreen() {
-        navController.navigate(MainScreen.screenRoute)
+        navigator.navigate(MainScreen)
     }
 
     override fun onConverterModSelected(mod: ModConverter.State.Mod) {

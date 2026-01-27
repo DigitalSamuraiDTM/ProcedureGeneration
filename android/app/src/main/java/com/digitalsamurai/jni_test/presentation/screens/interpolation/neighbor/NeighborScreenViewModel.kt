@@ -3,12 +3,12 @@ package com.digitalsamurai.jni_test.presentation.screens.interpolation.neighbor
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.digitalsamurai.core.otel.extensions.addEvent
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
+import com.digitalsamurai.jni_test.data.repositories.BitmapRepository
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
 import com.digitsamurai.algos.BitmapGenerator
-import com.digitalsamurai.jni_test.data.repositories.BitmapRepository
 import com.digitsamurai.utils.extensions.generateName
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -21,14 +21,14 @@ class NeighborScreenViewModel @AssistedInject constructor(
     private val bitmapGenerator: BitmapGenerator,
     private val bitmapRepository: BitmapRepository,
     @Assisted private val screenSpan: Span,
-    @Assisted private val navController: NavController,
+    @Assisted private val navigator: AppNavigator,
 ) : ScreenViewModel<NeighborScreenState, NeighborScreenEvent, NeighborScreenActions>(
     screenSpan = screenSpan,
 ), NeighborScreenActions {
 
     @AssistedFactory
     interface Factory {
-        fun get(screenSpan: Span, navController: NavController): NeighborScreenViewModel
+        fun get(screenSpan: Span, navigator: AppNavigator): NeighborScreenViewModel
     }
 
     private val isAutosaveEnabled: Boolean = true

@@ -1,11 +1,11 @@
 package com.digitalsamurai.jni_test.presentation.screens.auth
 
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.digitalsamurai.core.otel.extensions.setException
+import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
-import com.digitalsamurai.jni_test.data.network.requests.auth.PostAuthRequest
 import com.digitalsamurai.jni_test.data.network.repository.AuthRepository
+import com.digitalsamurai.jni_test.data.network.requests.auth.PostAuthRequest
 import com.digitalsamurai.jni_test.presentation.screens.main.MainScreen
 import com.digitalsamurai.opentelemetry.example.core.network.NetworkHttpClient
 import com.digitalsamurai.opentelemetry.example.core.network.models.Jwt
@@ -21,21 +21,21 @@ import kotlinx.coroutines.withContext
 @HiltViewModel(assistedFactory = AuthScreenViewModel.Factory::class)
 internal class AuthScreenViewModel @AssistedInject constructor(
     @Assisted private val span: Span,
-    @Assisted private val navController: NavController,
+    @Assisted private val navigator: AppNavigator,
     private val networkHttpClient: NetworkHttpClient,
     private val authRepository: AuthRepository,
-    ): ScreenViewModel<AuthScreenState, AuthScreenEvent, AuthScreenActions>(span), AuthScreenActions {
+) : ScreenViewModel<AuthScreenState, AuthScreenEvent, AuthScreenActions>(span), AuthScreenActions {
     override fun initialState(): AuthScreenState = AuthScreenState.default()
 
     @AssistedFactory
     interface Factory {
-        fun build(screenSpan: Span, navController: NavController): AuthScreenViewModel
+        fun build(screenSpan: Span, navigator: AppNavigator): AuthScreenViewModel
     }
 
     private var authJob: Job? = null
     override fun onLoginButtonClicked() {
         if (authJob?.isActive != true) {
-            authJob = viewModelScope.launchTracedSafe("Authorization",Dispatchers.IO) {
+            authJob = viewModelScope.launchTracedSafe("Authorization", Dispatchers.IO) {
                 updateState {
                     it.copy(
                         login = it.login.copy(isEnabled = false, isLoading = true),
@@ -62,15 +62,14 @@ internal class AuthScreenViewModel @AssistedInject constructor(
                 }
                 authRepository.set(Jwt(result.token))
                 withContext(Dispatchers.Main) {
-                    navController.navigate(MainScreen.screenRoute)
+                    navigator.newRoot(MainScreen)
                 }
             }
         }
     }
 
     override fun onAnonymButtonClicked() {
-        // todo new root chain
-        navController.navigate(MainScreen.screenRoute)
+        navigator.newRoot(MainScreen)
     }
 
 
