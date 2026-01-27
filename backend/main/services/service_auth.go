@@ -15,6 +15,8 @@ type ServiceAuth struct {
 
 // InitAuthService key - super secret key for jwt
 func InitAuthService(data environment.AuthService) *ServiceAuth {
+	// TODO добавить трассировки на авторизацию!
+
 	// todo представим, что тут мы получаем всю необходимую информацию для аутентификации и авторизации
 	return &ServiceAuth{
 		secretKey: data.Key,

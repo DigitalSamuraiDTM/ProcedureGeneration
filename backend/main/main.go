@@ -21,8 +21,19 @@ func main() {
 
 	envData := environment.LoadEnvironmentData()
 	authService := services.InitAuthService(envData.Services.Auth)
+	otelService, err := services.InitOtelService(context.Background(), envData.Services.Otel)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		if err := otelService.Tracer.Shutdown(context.Background()); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	router := chi.NewRouter()
+	otelService.SetupMiddleware(router)
+
 	// Middleware
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
