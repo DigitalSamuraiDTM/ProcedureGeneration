@@ -1,11 +1,12 @@
-package com.digitalsamurai.jni_test.data.network
+package com.digitalsamurai.jni_test.data.network.requests.auth
 
-import com.digitalsamurai.opentelemetry.example.core.network.NetworkHttpRequest
+import com.digitalsamurai.opentelemetry.example.core.network.models.Jwt
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-class AuthorizationRequest: NetworkHttpRequest<AuthorizationRequest.RequestData, AuthorizationRequest.ResponseData>() {
+class PostAuthRequest : AuthNetworkHttpRequest<PostAuthRequest.RequestData, PostAuthRequest.ResponseData>() {
 
     override val path: String = "/auth"
     override val method: Method = Method.POST
@@ -14,10 +15,15 @@ class AuthorizationRequest: NetworkHttpRequest<AuthorizationRequest.RequestData,
 
     @Serializable
     data class RequestData(
+        @SerialName("login")
         val login: String,
+        @SerialName("password")
         val password: String,
     )
+
+    @Serializable
     data class ResponseData(
-        val jwt: String
+        @SerialName("token")
+        val token: String
     )
 }

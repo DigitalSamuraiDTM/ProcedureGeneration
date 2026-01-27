@@ -23,12 +23,13 @@ abstract class ScreenViewModel<STATE : UiState, EVENT : UiEvent, ACTIONS : UiAct
     private val screenSpan: Span,
 ) : ViewModel() {
 
-    protected fun CoroutineScope.launchTraced(
+    protected fun CoroutineScope.launchTracedSafe(
         spanName: String,
         dispatcher: CoroutineDispatcher = Dispatchers.Main.immediate,
+        onException: ((t: Exception) -> Unit)? = null,
         launch: suspend Span.() -> Unit,
     ): Job {
-        val scopeSpan = Otel.tracer().spanBuilder(spanName)
+        val scopeSpan = Otel.tracer().spanBuilder(SPAN_PREFIX_NAME+spanName)
             .setParent(Context.current().with(screenSpan))
             .startSpan()
         val scopedContext = Context.current().with(scopeSpan).asContextElement()
@@ -41,7 +42,7 @@ abstract class ScreenViewModel<STATE : UiState, EVENT : UiEvent, ACTIONS : UiAct
                 scopeSpan.endWithException(null)
             } catch (e: Exception) {
                 scopeSpan.endWithException(e)
-                throw e
+                onException?.invoke(e)
             } finally {
                 // если никто не закрыл спан с ошибкой, то он закроется с неизвестностью
                 scopeSpan.endWithUnknown()
@@ -70,5 +71,9 @@ abstract class ScreenViewModel<STATE : UiState, EVENT : UiEvent, ACTIONS : UiAct
 
     protected fun event(event: EVENT) {
         _events.tryEmit(event)
+    }
+
+    private companion object {
+        private const val SPAN_PREFIX_NAME = "VM."
     }
 }

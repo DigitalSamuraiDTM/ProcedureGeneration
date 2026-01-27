@@ -32,8 +32,8 @@ import io.opentelemetry.api.trace.Span
 
 internal object AuthScreen : BaseScreen<AuthScreenState, AuthScreenEvent, AuthScreenActions>() {
 
-    override val screenName: String = "auth"
-    override val routeName: String = "AuthScreen"
+    override val screenName: String = "AuthScreen"
+    override val routeName: String = "auth"
     override val isNavigationBarEnabled: Boolean = false
 
     override suspend fun onEvent(
@@ -50,8 +50,8 @@ internal object AuthScreen : BaseScreen<AuthScreenState, AuthScreenEvent, AuthSc
     override fun MakeViewModel(
         screenSpan: Span,
         navController: NavController
-    ): AuthViewModel {
-        return hiltViewModel<AuthViewModel, AuthViewModel.Factory> { f ->
+    ): AuthScreenViewModel {
+        return hiltViewModel<AuthScreenViewModel, AuthScreenViewModel.Factory> { f ->
             f.build(screenSpan, navController)
         }
     }

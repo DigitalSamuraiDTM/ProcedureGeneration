@@ -2,7 +2,6 @@ package com.digitalsamurai.jni_test.presentation.screens.interpolation.bicubic
 
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.digitalsamurai.core.otel.Otel
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
 import com.digitsamurai.algos.BitmapGenerator
@@ -32,7 +31,7 @@ class BicubicScreenViewModel @AssistedInject constructor(
     }
 
     override fun onGenerateButtonClicked() {
-        viewModelScope.launchTraced("GenerateBicubicBitmap", Dispatchers.Default) {
+        viewModelScope.launchTracedSafe("GenerateBicubicBitmap", Dispatchers.Default) {
 
             val bitmap = bitmapGenerator.bicubicBitmap(
                 size = BitmapGenerator.Size(1000, 1000)

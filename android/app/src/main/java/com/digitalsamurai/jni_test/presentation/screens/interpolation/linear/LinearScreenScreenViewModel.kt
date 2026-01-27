@@ -1,16 +1,13 @@
 package com.digitalsamurai.jni_test.presentation.screens.interpolation.linear
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.digitalsamurai.core.otel.Otel
 import com.digitalsamurai.core.otel.extensions.addEvent
 import com.digitalsamurai.core.otel.extensions.endWithException
-import com.digitalsamurai.core.otel.extensions.setException
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
-import com.digitalsamurai.jni_test.data.network.GetLinearConfigRequest
+import com.digitalsamurai.jni_test.data.network.requests.frontback.GetLinearConfigRequest
 import com.digitalsamurai.jni_test.domain.GenerateBilinearImageUseCase
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
 import com.digitalsamurai.opentelemetry.example.core.network.NetworkHttpClient
@@ -57,7 +54,7 @@ class LinearScreenScreenViewModel @AssistedInject constructor(
     }
 
     override fun undoImageSaving(id: String) {
-        viewModelScope.launchTraced("UndoImageSaving") {
+        viewModelScope.launchTracedSafe("UndoImageSaving") {
             val isDeleted = bitmapRepository.delete(id)
             Log.d("OBAMA", "Image delete ${isDeleted}: ${id}")
         }
@@ -65,7 +62,7 @@ class LinearScreenScreenViewModel @AssistedInject constructor(
 
     override fun onGenerateButtonClicked() {
         generatorJob?.cancel()
-        generatorJob = viewModelScope.launchTraced("GenerateLinearBitmap", Dispatchers.Default) {
+        generatorJob = viewModelScope.launchTracedSafe("GenerateLinearBitmap", Dispatchers.Default) {
             updateState {
                 it.copy(isButtonLoading = true)
             }
@@ -78,7 +75,7 @@ class LinearScreenScreenViewModel @AssistedInject constructor(
                 updateState {
                     it.copy(isButtonLoading = false)
                 }
-                return@launchTraced
+                return@launchTracedSafe
             }
 
             val bitmap = generateBilinearImageUseCase(

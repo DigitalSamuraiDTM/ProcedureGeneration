@@ -1,12 +1,11 @@
-package com.digitalsamurai.jni_test.data.network
+package com.digitalsamurai.jni_test.data.network.requests.frontback
 
-import com.digitalsamurai.opentelemetry.example.core.network.NetworkHttpRequest
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-class GetLinearConfigRequest: NetworkHttpRequest<Unit, GetLinearConfigRequest.ResponseDto>() {
+class GetLinearConfigRequest : FrontbackNetworkHttpRequestM<Unit, GetLinearConfigRequest.ResponseDto>() {
 
     override val path: String = "/api/v1/diagram/bilinear/configuration"
     override val method: Method = Method.GET

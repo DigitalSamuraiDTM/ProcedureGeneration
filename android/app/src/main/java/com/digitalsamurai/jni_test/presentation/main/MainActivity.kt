@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
-import com.digitalsamurai.jni_test.Navigation
+import com.digitalsamurai.jni_test.core.navigation.Navigation
 import com.digitalsamurai.jni_test.data.network.repository.AuthRepository
 import com.digitalsamurai.jni_test.presentation.screens.auth.AuthScreen
 import com.digitalsamurai.jni_test.presentation.screens.gallery.GalleryScreen

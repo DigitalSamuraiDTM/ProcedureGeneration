@@ -16,8 +16,6 @@ class MainModule {
     @Singleton
     fun provideNetworkHttpClient(): NetworkHttpClient {
         return NetworkHttpClient(
-            hostAddress = "10.0.2.2",
-            portAddress = 8080,
             otel = Otel,
         )
     }

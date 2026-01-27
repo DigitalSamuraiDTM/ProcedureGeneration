@@ -23,8 +23,6 @@ import kotlinx.serialization.json.jsonObject
 
 // TODO вообще запросы надо делать умнее. Надо чтобы мы умели на каждый HTTP response code обрабатывать разные кейсы и, возможно, делать, разную десериализацию
 public class NetworkHttpClient(
-    public val hostAddress: String,
-    public val portAddress: Int,
     public val otel: Otel,
 ) {
 
@@ -51,8 +49,8 @@ public class NetworkHttpClient(
                     headers.append("Authorization", networkHttpRequest.jwt.value)
                 }
                 url {
-                    host = hostAddress
-                    port = portAddress
+                    host = networkHttpRequest.host
+                    port = networkHttpRequest.port
                     path(networkHttpRequest.path)
                 }
                 // у гет метода нет тела же по идее, закодируем по кайфу в параметры

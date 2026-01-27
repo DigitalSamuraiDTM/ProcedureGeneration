@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.digitalsamurai.core.otel.extensions.setException
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
-import com.digitalsamurai.jni_test.data.network.AuthorizationRequest
+import com.digitalsamurai.jni_test.data.network.requests.auth.PostAuthRequest
 import com.digitalsamurai.jni_test.data.network.repository.AuthRepository
 import com.digitalsamurai.jni_test.presentation.screens.main.MainScreen
 import com.digitalsamurai.opentelemetry.example.core.network.NetworkHttpClient
@@ -16,10 +16,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.opentelemetry.api.trace.Span
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-@HiltViewModel(assistedFactory = AuthViewModel.Factory::class)
-internal class AuthViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = AuthScreenViewModel.Factory::class)
+internal class AuthScreenViewModel @AssistedInject constructor(
     @Assisted private val span: Span,
     @Assisted private val navController: NavController,
     private val networkHttpClient: NetworkHttpClient,
@@ -29,13 +29,13 @@ internal class AuthViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun build(screenSpan: Span, navController: NavController): AuthViewModel
+        fun build(screenSpan: Span, navController: NavController): AuthScreenViewModel
     }
 
     private var authJob: Job? = null
     override fun onLoginButtonClicked() {
         if (authJob?.isActive != true) {
-            authJob = viewModelScope.launchTraced("Authorization",Dispatchers.IO) {
+            authJob = viewModelScope.launchTracedSafe("Authorization",Dispatchers.IO) {
                 updateState {
                     it.copy(
                         login = it.login.copy(isEnabled = false, isLoading = true),
@@ -44,8 +44,8 @@ internal class AuthViewModel @AssistedInject constructor(
                     )
                 }
                 val result = networkHttpClient.makeNetworkRequest(
-                    networkHttpRequest = AuthorizationRequest(),
-                    data = AuthorizationRequest.RequestData(
+                    networkHttpRequest = PostAuthRequest(),
+                    data = PostAuthRequest.RequestData(
                         login = state.value.login.text,
                         password = state.value.password.text
                     )
@@ -58,10 +58,12 @@ internal class AuthViewModel @AssistedInject constructor(
                             password = it.password.copy(isError = true, isEnabled = true)
                         )
                     }
-                    return@launchTraced
+                    return@launchTracedSafe
                 }
-                authRepository.set(Jwt(result.jwt))
-                navController.navigate(MainScreen.screenRoute)
+                authRepository.set(Jwt(result.token))
+                withContext(Dispatchers.Main) {
+                    navController.navigate(MainScreen.screenRoute)
+                }
             }
         }
     }

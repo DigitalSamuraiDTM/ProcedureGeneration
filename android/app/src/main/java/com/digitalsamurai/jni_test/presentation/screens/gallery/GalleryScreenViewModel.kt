@@ -3,7 +3,6 @@ package com.digitalsamurai.jni_test.presentation.screens.gallery
 import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.digitalsamurai.core.otel.Otel
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
 import com.digitalsamurai.jni_test.data.repositories.BitmapRepository
@@ -39,7 +38,7 @@ class GalleryScreenViewModel @AssistedInject constructor(
     }
 
     private fun loadBitmaps() {
-        viewModelScope.launchTraced("LoadBitmaps", Dispatchers.IO) {
+        viewModelScope.launchTracedSafe("LoadBitmaps", Dispatchers.IO) {
             val paths = bitmapRepository.getMetaInfo()
             updateState { state ->
                 state.copy(bitmapItems = paths.map {

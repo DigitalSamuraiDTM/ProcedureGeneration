@@ -4,6 +4,10 @@ import kotlin.reflect.KType
 
 public abstract class NetworkHttpRequest<REQUEST_DATA : Any, RESPONSE_DATA : Any> {
 
+    public abstract val host: String
+
+    public abstract val port: Int
+
     public abstract val path: String
 
     public abstract val method: Method

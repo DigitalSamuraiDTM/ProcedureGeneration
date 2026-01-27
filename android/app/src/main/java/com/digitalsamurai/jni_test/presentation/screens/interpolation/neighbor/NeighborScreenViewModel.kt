@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.digitalsamurai.core.otel.Otel
 import com.digitalsamurai.core.otel.extensions.addEvent
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
@@ -41,7 +40,7 @@ class NeighborScreenViewModel @AssistedInject constructor(
     }
 
     override fun undoImageSaving(bitmapId: String) {
-        viewModelScope.launchTraced("DeleteBitmap") {
+        viewModelScope.launchTracedSafe("DeleteBitmap") {
             val isDeleted = bitmapRepository.delete(bitmapId)
             Log.d("OBAMA", "Image delete ${isDeleted}: ${bitmapId}")
         }
@@ -52,7 +51,7 @@ class NeighborScreenViewModel @AssistedInject constructor(
     }
 
     override fun onGenerateButtonClicked() {
-        viewModelScope.launchTraced("GenerateNeighborBitmap") {
+        viewModelScope.launchTracedSafe("GenerateNeighborBitmap") {
             val bitmap = bitmapGenerator.neighborBitmap(
                 size = BitmapGenerator.Size(1000, 1000),
                 neighborConfig = BitmapGenerator.NeighborConfig.Random(20)
