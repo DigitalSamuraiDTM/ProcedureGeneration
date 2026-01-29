@@ -3,6 +3,8 @@ package services
 import (
 	"backend/environment"
 	"backend/main/requests/auth/models"
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -30,6 +32,27 @@ func (auth *ServiceAuth) Login(login string, password string) (string, error) {
 	// аутентификация ок, пользователь есть в системе, создаем токен
 	generatedToken, err := auth.generateToken("TODO")
 	return generatedToken, err
+}
+
+func (auth *ServiceAuth) Check(tokenString string) (bool, error) {
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		&models.Claims{},
+		func(token *jwt.Token) (any, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+			return []byte(auth.secretKey), nil
+		})
+	if err != nil {
+		return false, err
+	}
+	_, ok := token.Claims.(*models.Claims)
+	// TODO проверять expiration date
+	if !ok || !token.Valid {
+		return false, errors.New("invalid token")
+	}
+	return true, nil
 }
 
 func (service *ServiceAuth) generateToken(userId string) (string, error) {

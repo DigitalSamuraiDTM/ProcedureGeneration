@@ -53,7 +53,7 @@ internal fun Application.module(environmentData: EnvironmentData) {
         }
 
         getAuthorized(auth, "/api/v1/diagram/neighbor/configuration") {
-
+            call.respond(HttpStatusCode.OK, databaseInteractor.getNeighborConfiguration())
         }
     }
 }

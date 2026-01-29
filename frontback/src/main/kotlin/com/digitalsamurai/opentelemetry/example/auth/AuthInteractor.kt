@@ -35,7 +35,7 @@ class AuthInteractor(
             url {
                 host = data.host
                 port = data.port
-                path("/auth/validate")
+                path("/check")
             }
         }
         return httpResponse.status

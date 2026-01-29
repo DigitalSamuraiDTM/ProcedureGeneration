@@ -39,6 +39,7 @@ dependencies {
     implementation(libs.otel.api)
     implementation(libs.otel.semconv)
     implementation(libs.otel.ktor)
+    implementation(libs.otel.kotlin.extension)
     // KOTLINX
     implementation(libs.kotlinx.serialization.json)
     // KTOR CLIENT

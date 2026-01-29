@@ -3,6 +3,7 @@ package main
 import (
 	"backend/environment"
 	"backend/main/requests/auth"
+	"backend/main/requests/check"
 	"backend/main/requests/hello"
 	"backend/main/services"
 	"context"
@@ -42,6 +43,7 @@ func main() {
 
 	// Routes
 	auth.RegisterAuthRequest(router, authService)
+	check.RegisterCheckRequest(router, authService)
 	hello.RegisterHelloRequest(router)
 
 	server := &http.Server{
