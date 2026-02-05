@@ -1,13 +1,16 @@
 package com.digitalsamurai.jni_test.data.network.requests.frontback
 
+import com.digitalsamurai.opentelemetry.example.core.network.models.Jwt
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-class GetLinearConfigRequest : FrontbackNetworkHttpRequest<Unit, GetLinearConfigRequest.ResponseDto>() {
+class GetNeighborConfigRequest(
+    override val jwt: Jwt
+) : FrontbackAuthorizedNetworkHttpRequest<Unit, GetNeighborConfigRequest.ResponseDto>(jwt) {
 
-    override val path: String = "/api/v1/diagram/bilinear/configuration"
+    override val path: String = "/api/v1/diagram/neighbor/configuration"
     override val method: Method = Method.GET
     override val responseDataType: KType = typeOf<ResponseDto>()
     override val requestDataType: KType = typeOf<Unit>()
@@ -18,7 +21,7 @@ class GetLinearConfigRequest : FrontbackNetworkHttpRequest<Unit, GetLinearConfig
         val width: Int,
         @SerialName("height")
         val height: Int,
-        @SerialName("resolution")
-        val resolution: Int,
+        @SerialName("points")
+        val points: Int
     )
 }

@@ -4,10 +4,14 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.digitalsamurai.core.otel.extensions.addEvent
+import com.digitalsamurai.core.otel.extensions.endWithException
 import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.viewmodel.ScreenViewModel
+import com.digitalsamurai.jni_test.data.network.repository.AuthRepository
+import com.digitalsamurai.jni_test.data.network.requests.frontback.GetNeighborConfigRequest
 import com.digitalsamurai.jni_test.data.repositories.BitmapRepository
 import com.digitalsamurai.jni_test.presentation.view.BitmapRenderer
+import com.digitalsamurai.opentelemetry.example.core.network.NetworkHttpClient
 import com.digitsamurai.algos.BitmapGenerator
 import com.digitsamurai.utils.extensions.generateName
 import dagger.assisted.Assisted
@@ -20,6 +24,8 @@ import io.opentelemetry.api.trace.Span
 class NeighborScreenViewModel @AssistedInject constructor(
     private val bitmapGenerator: BitmapGenerator,
     private val bitmapRepository: BitmapRepository,
+    private val networkHttpClient: NetworkHttpClient,
+    private val authRepository: AuthRepository,
     @Assisted private val screenSpan: Span,
     @Assisted private val navigator: AppNavigator,
 ) : ScreenViewModel<NeighborScreenState, NeighborScreenEvent, NeighborScreenActions>(
@@ -35,7 +41,8 @@ class NeighborScreenViewModel @AssistedInject constructor(
 
     override fun initialState(): NeighborScreenState {
         return NeighborScreenState(
-            bitmapRendererState = BitmapRenderer.State.Empty
+            bitmapRendererState = BitmapRenderer.State.Empty,
+            isButtonLoading = false
         )
     }
 
@@ -52,9 +59,17 @@ class NeighborScreenViewModel @AssistedInject constructor(
 
     override fun onGenerateButtonClicked() {
         viewModelScope.launchTracedSafe("GenerateNeighborBitmap") {
+            updateState { it.copy(isButtonLoading = true) }
+            val token = authRepository.get() ?: error("No auth token")
+            val config = networkHttpClient.makeNetworkRequest(GetNeighborConfigRequest(token), Unit)
+                .getOrElse { t ->
+                    endWithException(t)
+                    updateState { it.copy(isButtonLoading = false) }
+                    return@launchTracedSafe
+                }
             val bitmap = bitmapGenerator.neighborBitmap(
-                size = BitmapGenerator.Size(1000, 1000),
-                neighborConfig = BitmapGenerator.NeighborConfig.Random(20)
+                size = BitmapGenerator.Size(config.width, config.height),
+                neighborConfig = BitmapGenerator.NeighborConfig.Random(config.points)
             )
             val bitmapId = bitmap.generateName()
             updateState {
