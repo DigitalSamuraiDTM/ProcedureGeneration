@@ -7,9 +7,13 @@ import io.opentelemetry.sdk.internal.AttributesMap
 import kotlin.coroutines.cancellation.CancellationException
 
 // TODO нужна своя обертка нормальная
-fun Span.addEvent(eventName: String, attributes: Map<String, String>) {
+fun Span.addEvent(eventName: String, attributes: Map<String, Any>) {
     val attributes = AttributesMap.create(attributes.size.toLong(), attributes.size).apply {
-        putAll(attributes.mapKeys { entry -> AttributeKey.stringKey(entry.key) })
+        putAll(
+            attributes
+            .mapValues { (key, value) -> value.toString() }
+            .mapKeys { entry -> AttributeKey.stringKey(entry.key) }
+        )
     }
     addEvent(eventName, attributes)
 }

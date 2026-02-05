@@ -4,6 +4,7 @@ import com.digitalsamurai.opentelemetry.example.EnvironmentData
 import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.trace.Span
+import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator
 import io.opentelemetry.context.Context
 import io.opentelemetry.context.propagation.ContextPropagators
@@ -27,7 +28,7 @@ internal object OtelHolder {
     }
 
     fun childSpan(parentSpan: Span, name: String): Span {
-        return get().getTracer("tracer")
+        return get().mainTracer()
             .spanBuilder(name)
             .setParent(Context.current().with(parentSpan))
             .startSpan()
@@ -66,3 +67,6 @@ internal object OtelHolder {
             .buildAndRegisterGlobal()
     }
 }
+
+
+fun OpenTelemetry.mainTracer() = getTracer("main")

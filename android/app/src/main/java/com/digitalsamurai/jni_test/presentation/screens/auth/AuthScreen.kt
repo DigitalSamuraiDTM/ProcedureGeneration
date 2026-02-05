@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.digitalsamurai.jni_test.core.navigation.AppNavigator
 import com.digitalsamurai.jni_test.core.screen.BaseScreen
 import com.digitalsamurai.jni_test.core.views.MyButton
+import com.digitalsamurai.jni_test.core.views.MyTextField
 import com.digitalsamurai.jni_test.presentation.theme.AppTheme
 import com.digitalsamurai.jni_test.presentation.theme.ThemeMod
 import io.opentelemetry.api.trace.Span
@@ -71,20 +72,22 @@ internal object AuthScreen : BaseScreen<AuthScreenState, AuthScreenEvent, AuthSc
                 modifier = Modifier.wrapContentSize()
             ) {
                 // login block
-                TextField(
+                MyTextField(
                     isError = state.login.isError,
                     enabled = state.login.isEnabled,
                     placeholder = { Text("Login") },
                     value = state.login.text,
-                    onValueChange = actions::onLoginInput
+                    onValueChange = actions::onLoginInput,
+                    textFieldName = "Login"
                 )
-                TextField(
+                MyTextField(
                     isError = state.password.isError,
                     enabled = state.password.isEnabled,
                     value = state.password.text,
                     placeholder = { Text("Password") },
                     onValueChange = actions::onPasswordInput,
-                    visualTransformation = PasswordVisualTransformation()
+                    visualTransformation = PasswordVisualTransformation(),
+                    textFieldName = "Password"
                 )
 
                 // buttons block

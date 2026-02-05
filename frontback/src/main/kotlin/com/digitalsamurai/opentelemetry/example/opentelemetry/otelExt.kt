@@ -25,13 +25,21 @@ fun buildOpenTelemetryPlugin(disabledRequests: Set<String>) = createApplicationP
         override fun keys(carrier: Headers): Iterable<String?> = carrier.names()
         override fun get(carrier: Headers?, key: String): String? = carrier?.get(key)
     }
-    onCall { call ->
+    application.intercept(ApplicationCallPipeline.Setup) {
         if (disabledRequests.contains(call.request.path())) {
-            return@onCall
+            proceed()
+            return@intercept
         }
         val parentContext = propagator.extract(Context.current(), call.request.headers, textMapGetter)
         val requestSpan = tracer.spanBuilder(call.request.path()).setParent(parentContext).startSpan()
         call.attributes.put(spanKey, requestSpan)
+        try {
+            withContext(Context.current().with(requestSpan).asContextElement()) {
+                proceed()
+            }
+        } finally {
+            requestSpan.end()
+        }
     }
     on(ResponseSent) { call ->
         if (disabledRequests.contains(call.request.path())) {
@@ -42,6 +50,7 @@ fun buildOpenTelemetryPlugin(disabledRequests: Set<String>) = createApplicationP
         requestSpan.setStatus(spanStatus)
         requestSpan.end()
     }
+
 }
 
 private fun HttpStatusCode?.toSpanStatus(): StatusCode {
@@ -86,7 +95,7 @@ internal suspend inline fun <T> withTracedContext(
     crossinline block: suspend TracedScope.() -> T
 ): T {
     return withContext(dispatcher + Context.current().asContextElement()) {
-        val span = OtelHolder.get().getTracer("Main")
+        val span = OtelHolder.get().mainTracer()
             .spanBuilder(name)
             .startSpan()
             .apply { makeCurrent() }

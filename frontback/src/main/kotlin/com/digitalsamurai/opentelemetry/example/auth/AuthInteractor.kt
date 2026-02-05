@@ -1,6 +1,7 @@
 package com.digitalsamurai.opentelemetry.example.auth
 
 import com.digitalsamurai.opentelemetry.example.EnvironmentData
+import com.digitalsamurai.opentelemetry.example.opentelemetry.withTracedContext
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -24,20 +25,21 @@ class AuthInteractor(
         }
     }
 
-    suspend fun validate(context: RoutingCall): HttpStatusCode {
+    suspend fun validate(context: RoutingCall): HttpStatusCode = withTracedContext("checkAuth") {
         val authHeader = context.request.headers["Authorization"]
         if (authHeader == null || authHeader == "") {
-            return HttpStatusCode.Unauthorized
+            return@withTracedContext HttpStatusCode.Unauthorized
         }
         val httpResponse = authorizationClient.request {
             method = HttpMethod.Get
             headers.append("Authorization", authHeader)
+            headers.append("traceparent", "00-${spanContext.traceId}-${spanContext.spanId}-01")
             url {
                 host = data.host
                 port = data.port
                 path("/check")
             }
         }
-        return httpResponse.status
+        return@withTracedContext httpResponse.status
     }
 }
