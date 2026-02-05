@@ -22,7 +22,7 @@ class AuthRepository @Inject constructor(
     suspend fun set(jwt: Jwt) = withTracedContext("AuthRepository.set") {
         preferences.edit().putString(PREFERENCE_KEY, jwt.value).also {
             cache = jwt
-        }
+        }.apply()
     }
 
     suspend fun get(): Jwt? = withTracedContext("AuthRepository.get") {
