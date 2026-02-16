@@ -33,5 +33,5 @@ include(":android:utils")
 include(":android:core:otel")
 include(":android:core:network")
 
-include(":frontback")
+include(":backend")
 

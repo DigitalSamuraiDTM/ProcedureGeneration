@@ -1,0 +1,17 @@
+# сборка
+FROM gradle:8.11 AS build
+WORKDIR /app
+#RUN ls .. -a && false
+COPY ../gradlew ../settings.gradle.kts ../build.gradle.kts /app/
+COPY ../gradle /app/gradle
+COPY ../backend /app/backend
+RUN chmod +x gradlew
+RUN ./gradlew :backend:clean :backend:build
+
+# запуск
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+# копируем файл полученный в итоге из AS build
+COPY --from=build /app/backend/build/libs/backend-all.jar backend-all.jar
+EXPOSE 8080
+CMD ["java", "-jar", "backend-all.jar"]

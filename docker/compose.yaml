@@ -1,9 +1,23 @@
 services:
-  frontback:
+  authorization:
     build:
-      context: .
-      dockerfile: Dockerfile.frontback
-    container_name: frontback
+      context: .. # откуда нюхать файлы
+      dockerfile: docker/Dockerfile.authorization # путь докерфайла также учитывает контекст
+    container_name: authorization
+    ports:
+      - "8081:8081"
+    environment:
+      - server_host=0.0.0.0
+      - server_port=8081
+      - auth_key=k9EwzXH4QZkz2qZ8QfP4aK8xN0mH2vY8d7mF3B2cL6o=
+      - auth_issuer=auth_pod1
+      - otel_host=0.0.0.0
+      - otel_port=4317
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: backend
     ports:
       - "8080:8080"
     environment:
@@ -12,6 +26,8 @@ services:
       - server_port=8080
       - otel_host=collector
       - otel_port=4318
+      - auth_host=0.0.0.0
+      - auth_port=8081
     restart: unless-stopped
   collector:
     image: "otel/opentelemetry-collector-contrib@sha256:e39311df1f3d941923c00da79ac7ba6269124a870ee87e3c3ad24d60f8aee4d2"

@@ -5,7 +5,7 @@ plugins {
     application
 }
 
-group = "com.digitalsamurai.opentelemetry.example"
+group = "com.digitalsamurai.opentelemetry.example.backend"
 version = "1.0.0"
 application {
     mainClass.set("com.digitalsamurai.opentelemetry.example.MainKt")
