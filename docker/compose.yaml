@@ -11,7 +11,7 @@ services:
       - SERVER_PORT=8081
       - AUTH_KEY=k9EwzXH4QZkz2qZ8QfP4aK8xN0mH2vY8d7mF3B2cL6o=
       - AUTH_ISSUER=auth_pod1
-      - OTEL_HOST=0.0.0.0
+      - OTEL_HOST=collector
       - OTEL_PORT=4317
   backend:
     build:
@@ -26,7 +26,7 @@ services:
       - server_port=8080
       - otel_host=collector
       - otel_port=4318
-      - auth_host=0.0.0.0
+      - auth_host=authorization
       - auth_port=8081
     restart: unless-stopped
   collector:
