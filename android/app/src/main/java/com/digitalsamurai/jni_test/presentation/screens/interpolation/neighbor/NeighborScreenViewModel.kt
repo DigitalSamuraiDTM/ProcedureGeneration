@@ -76,8 +76,9 @@ class NeighborScreenViewModel @AssistedInject constructor(
                 it.copy(
                     bitmapRendererState = BitmapRenderer.State.ContentBitmap(
                         bitmap = bitmap,
-                        id = bitmapId
-                    )
+                        id = bitmapId,
+                    ),
+                    isButtonLoading = false
                 )
             }
             if (isAutosaveEnabled) {

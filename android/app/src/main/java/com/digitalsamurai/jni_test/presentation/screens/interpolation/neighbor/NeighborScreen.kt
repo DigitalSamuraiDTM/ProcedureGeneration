@@ -110,7 +110,8 @@ object NeighborScreen :
                         width = Dimension.fillToConstraints
                         height = Dimension.wrapContent
                     },
-                onClick = actions::onGenerateButtonClicked
+                isLoading = state.isButtonLoading,
+                onClick = actions::onGenerateButtonClicked,
             ) {
                 Text("Generate")
             }

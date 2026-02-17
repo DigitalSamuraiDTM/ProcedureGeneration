@@ -119,13 +119,10 @@ object LinearScreen : BaseScreen<LinearScreenState, LinearScreenEvent, LinearScr
                         width = Dimension.fillToConstraints
                         height = Dimension.wrapContent
                     },
-                onClick = actions::onGenerateButtonClicked
+                onClick = actions::onGenerateButtonClicked,
+                isLoading = state.isButtonLoading
             ) {
-                if (state.isButtonLoading) {
-                    CircularProgressIndicator()
-                } else {
-                    Text("Generate")
-                }
+                Text("Generate")
             }
         }
     }
