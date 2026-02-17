@@ -7,12 +7,12 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - server_host=0.0.0.0
-      - server_port=8081
-      - auth_key=k9EwzXH4QZkz2qZ8QfP4aK8xN0mH2vY8d7mF3B2cL6o=
-      - auth_issuer=auth_pod1
-      - otel_host=0.0.0.0
-      - otel_port=4317
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8081
+      - AUTH_KEY=k9EwzXH4QZkz2qZ8QfP4aK8xN0mH2vY8d7mF3B2cL6o=
+      - AUTH_ISSUER=auth_pod1
+      - OTEL_HOST=0.0.0.0
+      - OTEL_PORT=4317
   backend:
     build:
       context: ..
